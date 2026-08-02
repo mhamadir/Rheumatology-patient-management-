@@ -1,0 +1,6 @@
+{
+  "name": "Rheumatology Clinical Record",
+  "description": "Comprehensive Rheumatology Clinical Intake, Tri-State Screening, and Patient Record Management System",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

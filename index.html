@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Rheumatology Clinical Record</title>
+  <link rel="manifest" href="./manifest.json" />
+  <style>
+    /* CSS Variables & Professional Polish Setup */
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-accent: #f1f5f9;
+      --bg-input: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --primary-light: #ccfbf1;
+      --primary-border: #99f6e4;
+      --success: #22c55e;
+      --success-light: #dcfce7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --neutral-btn: #e2e8f0;
+      --neutral-btn-text: #475569;
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    html.dark {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-accent: #334155;
+      --bg-input: #0f172a;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --primary: #14b8a6;
+      --primary-hover: #2dd4bf;
+      --primary-light: #134e4a;
+      --primary-border: #0d9488;
+      --success: #4ade80;
+      --success-light: #14532d;
+      --danger: #f87171;
+      --danger-light: #7f1d1d;
+      --neutral-btn: #334155;
+      --neutral-btn-text: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      padding-bottom: 90px;
+    }
+
+    /* Header Bar */
+    header.app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+    }
+
+    .header-text-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    h1.header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    @media (max-width: 360px) {
+      h1.header-title {
+        font-size: 0.875rem;
+      }
+    }
+
+    .header-doctor-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .header-doctor-name {
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .btn-edit-doctor {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: color 0.15s ease;
+    }
+
+    .btn-edit-doctor:hover {
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      padding: 0;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-accent);
+      border-color: var(--border-color);
+      color: var(--primary);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    .icon-btn.btn-primary-icon {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+    }
+
+    .icon-btn.btn-primary-icon:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .icon-btn.btn-danger-icon {
+      color: var(--danger);
+      border-color: var(--border-color);
+    }
+
+    .icon-btn.btn-danger-icon:hover {
+      background-color: #fef2f2;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    html.dark .icon-btn.btn-danger-icon:hover {
+      background-color: #450a0a;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: #ffffff;
+      border: 1px solid var(--danger);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+    }
+
+    .btn-danger:active {
+      transform: scale(0.97);
+    }
+
+    .btn-text-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-text-icon:hover {
+      background-color: var(--bg-accent);
+    }
+
+    .btn-text-icon:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    /* Layout Containers */
+    .container {
+      width: 100%;
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* View Switcher */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Patient List Controls */
+    .list-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .list-controls {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 16px 10px 42px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      pointer-events: none;
+    }
+
+    .list-action-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Patient Cards Grid */
+    .patient-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .patient-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .patient-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .patient-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .patient-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .patient-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .patient-file-badge {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border: 1px solid var(--primary-border);
+    }
+
+    .patient-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .patient-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .patient-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .card-action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .card-action-btn:hover {
+      background-color: var(--bg-accent);
+    }
+
+    .card-action-btn.delete {
+      color: var(--danger);
+      background: var(--danger-light);
+      border-color: transparent;
+    }
+
+    .card-action-btn.delete:hover {
+      opacity: 0.9;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      background-color: var(--bg-card);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-top: 20px;
+    }
+
+    .empty-icon {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+    }
+
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .empty-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Accordions in Form */
+    .accordion-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .accordion-item {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--border-color);
+    }
+
+    .accordion-item.open {
+      border-left-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .accordion-header {
+      width: 100%;
+      padding: 14px 18px;
+      background-color: var(--bg-card);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      gap: 12px;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .accordion-header:hover {
+      background-color: var(--bg-accent);
+    }
+
+    .accordion-title-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--border-color);
+      flex-shrink: 0;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .status-dot.has-data {
+      background-color: var(--success);
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+    }
+
+    .accordion-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .accordion-badge {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: var(--bg-accent);
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+    }
+
+    .accordion-chevron {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .accordion-item.open .accordion-chevron {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 18px;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+    }
+
+    .accordion-item.open .accordion-content {
+      display: block;
+    }
+
+    /* Form Fields Styling */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid.cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .form-grid.cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .form-grid.cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 9px 12px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .form-textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .section-subtitle {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 20px 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-subtitle::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: var(--border-color);
+    }
+
+    .section-subtitle:first-child {
+      margin-top: 0;
+    }
+
+    /* Tri-State Toggle List */
+    .screening-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screening-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      gap: 12px;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .screening-item:hover {
+      background-color: var(--bg-accent);
+    }
+
+    .screening-item.row-yes {
+      background-color: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .screening-item.row-no {
+      background-color: #fef2f2;
+      border-color: #fca5a5;
+    }
+
+    html.dark .screening-item.row-yes {
+      background-color: #064e3b;
+      border-color: #047857;
+    }
+
+    html.dark .screening-item.row-no {
+      background-color: #450a0a;
+      border-color: #991b1b;
+    }
+
+    .screening-text {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      flex: 1;
+      line-height: 1.35;
+    }
+
+    .screening-num {
+      font-weight: 800;
+      color: var(--primary);
+      margin-right: 4px;
+    }
+
+    /* Tri-State Button Group (3 Separate Buttons) */
+    .tristate-group {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 380px) {
+      .screening-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .tristate-group {
+        width: 100%;
+      }
+      .tristate-opt {
+        flex: 1;
+      }
+    }
+
+    .tristate-opt {
+      height: 44px;
+      min-width: 44px;
+      padding: 0 16px;
+      border: none;
+      border-right: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: none;
+    }
+
+    .tristate-group .tristate-opt:last-child {
+      border-right: none;
+    }
+
+    .tristate-opt:hover:not(.active) {
+      background-color: var(--bg-accent);
+    }
+
+    .tristate-opt.opt-blank.active {
+      background-color: var(--neutral-btn);
+      color: var(--text-main);
+      font-weight: 800;
+    }
+
+    .tristate-opt.opt-yes.active {
+      background-color: var(--success);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .tristate-opt.opt-no.active {
+      background-color: var(--danger);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    /* Timestamps Display */
+    .patient-timestamps {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .patient-timestamps-form {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Sticky Bottom Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-save {
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+      flex: 1;
+      max-width: 260px;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-save:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-save:active {
+      transform: scale(0.98);
+    }
+
+    .btn-cancel {
+      background-color: var(--bg-accent);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: var(--border-color);
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Hidden File Input */
+    #csv-file-input {
+      display: none;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background-color: var(--text-main);
+      color: var(--bg-main);
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-title-group">
+      <div class="app-logo" title="Rheumatology Clinical Record">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          <path d="M12 11v6"></path>
+          <path d="M9 14h6"></path>
+        </svg>
+      </div>
+      <div class="header-text-container">
+        <h1 class="header-title" id="header-app-title">Rheumatology Clinical Record</h1>
+        <div class="header-doctor-line">
+          <span class="header-doctor-name" id="header-doctor-name">Doctor Name</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- List View Header Actions -->
+      <div id="list-header-actions" class="header-actions">
+        <button class="icon-btn" id="btn-import-csv" title="Import CSV" aria-label="Import CSV">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        </button>
+        <button class="icon-btn" id="btn-export-all" title="Export All CSV" aria-label="Export All CSV">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+        <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme" aria-label="Toggle Theme">☀️</button>
+      </div>
+
+      <!-- Form View Header Actions -->
+      <div id="form-header-actions" class="header-actions" style="display: none;">
+        <button class="icon-btn" id="btn-download-single" title="Download Patient CSV" aria-label="Download Patient CSV">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+        <button class="icon-btn" id="btn-share-single" title="Share Patient CSV" aria-label="Share Patient CSV">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </button>
+        <button class="icon-btn" id="btn-form-theme-toggle" title="Toggle Theme" aria-label="Toggle Theme">☀️</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ================= VIEW 1: PATIENT LIST ================= -->
+    <section id="view-list" class="view active">
+      <div class="list-controls">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" class="search-input" placeholder="Search by Name, File No, or Phone..." />
+        </div>
+        <div class="list-action-btns">
+          <button class="icon-btn btn-primary-icon" id="btn-add-patient" title="Add New Patient" aria-label="Add New Patient">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="patient-list-container" class="patient-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: PATIENT FORM ================= -->
+    <section id="view-form" class="view">
+      <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+        <button class="icon-btn" id="btn-back-to-list" title="Back to Patient List" aria-label="Back to Patient List">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <span id="form-mode-badge" style="font-size: 0.85rem; font-weight: 700; color: var(--primary);">New Patient</span>
+      </div>
+
+      <form id="patient-form" onsubmit="return false;">
+        <div class="accordion-group">
+
+          <!-- PATIENT HEADER -->
+          <div class="accordion-item open" id="acc-header">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-header')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-header"></span>
+                <span class="accordion-title">Patient Header</span>
+              </div>
+              <span class="accordion-badge" id="badge-header">Header</span>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-grid cols-2">
+                <div class="form-group">
+                  <label class="form-label" for="inp-name">Patient Name *</label>
+                  <input type="text" id="inp-name" class="form-input" placeholder="e.g. John Doe" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-file-no">File No *</label>
+                  <input type="text" id="inp-file-no" class="form-input" placeholder="e.g. RHEU-2026-001" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-age-sex">Age / Sex</label>
+                  <input type="text" id="inp-age-sex" class="form-input" placeholder="e.g. 45 / F" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-visit-date">Date of Visit</label>
+                  <input type="date" id="inp-visit-date" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-occupation">Occupation</label>
+                  <input type="text" id="inp-occupation" class="form-input" placeholder="e.g. Teacher" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-phone">Phone</label>
+                  <input type="tel" id="inp-phone" class="form-input" placeholder="e.g. +1 555-0192" />
+                </div>
+              </div>
+              <div id="form-timestamp-info" class="patient-timestamps-form" style="display: none;"></div>
+            </div>
+          </div>
+
+          <!-- SECTION 1: CHIEF COMPLAINT -->
+          <div class="accordion-item" id="acc-sec1">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec1')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec1"></span>
+                <span class="accordion-title">1. Chief Complaint (C/O)</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-group">
+                <textarea id="inp-chief-complaint" class="form-textarea" placeholder="Detail the chief complaint and duration..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: HISTORY OF PRESENT ILLNESS -->
+          <div class="accordion-item" id="acc-sec2">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec2')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec2"></span>
+                <span class="accordion-title">2. History of Present Illness (HPI)</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-group">
+                <textarea id="inp-hpi" class="form-textarea" style="min-height: 140px;" placeholder="Onset, duration, course, aggravating/relieving factors, previous treatments..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: CRITICAL RHEUMATOLOGICAL SCREENING -->
+          <div class="accordion-item" id="acc-sec3">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec3')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec3"></span>
+                <span class="accordion-title">3. Critical Rheumatological Screening</span>
+              </div>
+              <span class="accordion-badge" id="badge-sec3">0/30</span>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+
+              <div class="section-subtitle">A. Articular Pattern & Chronobiology</div>
+              <div class="screening-list" id="list-screening-A"></div>
+
+              <div class="section-subtitle">B. Connective Tissue Disease & Autoimmune Screen</div>
+              <div class="screening-list" id="list-screening-B"></div>
+
+              <div class="section-subtitle">C. Spondyloarthritis (SpA) & Systemic Vasculitis Red Flags</div>
+              <div class="screening-list" id="list-screening-C"></div>
+
+            </div>
+          </div>
+
+          <!-- SECTION 4: PAST MEDICAL, FAMILY, & SOCIAL HISTORY -->
+          <div class="accordion-item" id="acc-sec4">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec4')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec4"></span>
+                <span class="accordion-title">4. Past Medical, Family, & Social History</span>
+              </div>
+              <span class="accordion-badge" id="badge-sec4">0/8</span>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+
+              <div class="section-subtitle">Comorbidities & Past History</div>
+              <div class="screening-list" id="list-past-history"></div>
+
+              <div class="section-subtitle">Family History (Autoimmune Focus)</div>
+              <div class="screening-list" id="list-family-history"></div>
+
+              <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label" for="inp-medications">Current Medications</label>
+                <textarea id="inp-medications" class="form-textarea" placeholder="List current medications, doses, and compliance..."></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SECTION 5: REVIEW OF SYSTEMS -->
+          <div class="accordion-item" id="acc-sec5">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec5')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec5"></span>
+                <span class="accordion-title">5. Review of Systems</span>
+              </div>
+              <span class="accordion-badge" id="badge-sec5">0/44</span>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content" id="container-ros">
+              <!-- Rendered dynamically by category -->
+            </div>
+          </div>
+
+          <!-- SECTION 6: PHYSICAL EXAMINATION -->
+          <div class="accordion-item" id="acc-sec6">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec6')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec6"></span>
+                <span class="accordion-title">6. Physical Examination</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-grid cols-2">
+                <div class="form-group">
+                  <label class="form-label" for="inp-vital-bp">BP (Blood Pressure)</label>
+                  <input type="text" id="inp-vital-bp" class="form-input" placeholder="e.g. 120/80" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-vital-pr">PR (Pulse Rate bpm)</label>
+                  <input type="number" step="1" id="inp-vital-pr" class="form-input" placeholder="e.g. 72" inputmode="numeric" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-vital-temp">Temp (°C / °F)</label>
+                  <input type="number" step="0.1" id="inp-vital-temp" class="form-input" placeholder="e.g. 36.8" inputmode="decimal" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-vital-spo2">SpO2 (%)</label>
+                  <input type="number" step="1" id="inp-vital-spo2" class="form-input" placeholder="e.g. 98" inputmode="numeric" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 7: INVESTIGATIONS -->
+          <div class="accordion-item" id="acc-sec7">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec7')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec7"></span>
+                <span class="accordion-title">7. Investigations</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-group">
+                <textarea id="inp-investigations" class="form-textarea" placeholder="Lab results (ESR, CRP, RF, Anti-CCP, ANA, HLA-B27, CBC, LFT, RFT, X-rays, MRI, Ultrasound)..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 8: RX (PRESCRIPTION) -->
+          <div class="accordion-item" id="acc-sec8">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec8')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec8"></span>
+                <span class="accordion-title">8. Rx (Prescription) & Plan</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-group">
+                <textarea id="inp-prescription" class="form-textarea" style="min-height: 140px;" placeholder="Prescriptions, DMARDs, Biologics, NSAIDs, Steroid taper, physical therapy, follow-up date..."></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Sticky Bottom Action Bar (Visible in Form View) -->
+  <div id="form-bottom-bar" class="bottom-bar" style="display: none;">
+    <button type="button" class="btn-cancel" id="btn-cancel-form">Cancel</button>
+    <button type="button" class="btn-save" id="btn-save-record">
+      <span>💾</span> Save Patient Record
+    </button>
+  </div>
+
+  <!-- Hidden CSV Input -->
+  <input type="file" id="csv-file-input" accept=".csv,text/csv" />
+
+  <!-- Modal Component -->
+  <div class="modal-overlay" id="app-modal">
+    <div class="modal-card">
+      <h2 class="modal-title" id="modal-title">Confirm</h2>
+      <div class="modal-body" id="modal-body">Modal body text</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="modal-btn-cancel">Cancel</button>
+        <button class="btn-text-icon btn-primary" id="modal-btn-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor Setup Modal -->
+  <div class="modal-overlay" id="doctor-setup-modal">
+    <div class="modal-card">
+      <h2 class="modal-title">Welcome to Rheumatology Clinical Record</h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+        Please enter your doctor or clinic name to identify your clinical records.
+      </p>
+      <form id="doctor-name-form" onsubmit="return false;">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label" for="inp-doctor-name">Doctor / Clinic Name *</label>
+          <input type="text" id="inp-doctor-name" class="form-input" placeholder="e.g. Dr. Karl / City Rheumatology Clinic" required />
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-text-icon btn-primary" id="btn-save-doctor-name" style="width: 100%; justify-content: center;">
+            Start Using App
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Import Options Modal -->
+  <div class="modal-overlay" id="import-options-modal">
+    <div class="modal-card">
+      <h2 class="modal-title">Import CSV Records</h2>
+      <div class="modal-body" id="import-modal-body">Found records in CSV. Choose how to import:</div>
+      <div class="modal-actions" style="flex-wrap: wrap; gap: 8px;">
+        <button type="button" class="btn-cancel" id="import-btn-cancel">Cancel</button>
+        <button type="button" class="btn-text-icon btn-primary" id="import-btn-merge">Merge Records</button>
+        <button type="button" class="btn-danger" id="import-btn-replace">Replace All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div class="toast" id="toast-message">Notification</div>
+
+  <!-- Javascript Logic -->
+  <script>
+    /* ================= DATA SPECIFICATION ================= */
+    const STORAGE_KEY = 'rheuma_clinical_records';
+    const DRAFT_KEY = 'rheuma_draft_record';
+    const THEME_KEY = 'rheuma_theme';
+    const DOCTOR_NAME_KEY = 'rheuma_doctor_name';
+
+    // Tri-State Items Config: Items 1 to 82
+    const SECTION_3_A = [
+      { id: 'item_1', num: '1.', text: 'Inflammatory Character: Morning stiffness > 1 hour?' },
+      { id: 'item_2', num: '2.', text: 'Pain improves with movement/exercise (not rest)?' },
+      { id: 'item_3', num: '3.', text: 'Nocturnal pain / awakening during second half of night?' },
+      { id: 'item_4', num: '4.', text: 'Distribution: Symmetric vs. Asymmetric involvement?' },
+      { id: 'item_5', num: '5.', text: 'Joint Size: Small joints (PIP, MCP, MTP) vs. Large joints?' },
+      { id: 'item_6', num: '6.', text: 'Onset Profile: Acute/Gouty vs. Chronic/Progressive?' }
+    ];
+
+    const SECTION_3_B = [
+      { id: 'item_7', num: '7.', text: 'Constitutional: Unexplained fever, weight loss, severe fatigue' },
+      { id: 'item_8', num: '8.', text: 'Malar Rash: Fixed erythema over cheeks, sparing nasolabial folds' },
+      { id: 'item_9', num: '9.', text: 'Photosensitivity: Skin rash resulting from unusual reaction to sunlight' },
+      { id: 'item_10', num: '10.', text: 'Discoid Rash: Erythematous raised patches with keratotic scaling' },
+      { id: 'item_11', num: '11.', text: 'Sicca Symptoms (Dry Eyes): Gritty sensation > 3 months / artificial tears?' },
+      { id: 'item_12', num: '12.', text: 'Sicca Symptoms (Dry Mouth): Need liquids to swallow dry foods?' },
+      { id: 'item_13', num: '13.', text: 'Sclerodactyly / Skin Tightening: Proximal to MCP joints?' },
+      { id: 'item_14', num: '14.', text: 'Digital Ulcers / Pitting: Loss of fingertip substance / painful scars' },
+      { id: 'item_15', num: '15.', text: 'Alopecia: Diffuse non-scarring hair thinning or patches' },
+      { id: 'item_16', num: '16.', text: 'Oral/Nasal Ulcers: Recurrent, typically painless aphthous ulcers' },
+      { id: 'item_17', num: '17.', text: 'Raynaud\'s Phenomenon: Triphasic color changes (white → blue → red) in cold' },
+      { id: 'item_18', num: '18.', text: 'Heliotrope Rash / Gottron\'s Papules: Violaceous eyelids / MCP knuckles' },
+      { id: 'item_19', num: '19.', text: 'Proximal Muscle Weakness: Difficulty rising from chair / combing hair' },
+      { id: 'item_20', num: '20.', text: 'Serositis: Pleuritic chest pain or pericarditic positional chest pain' }
+    ];
+
+    const SECTION_3_C = [
+      { id: 'item_21', num: '21.', text: 'Axial SpA: Chronic low back pain > 3 months, age of onset < 45 yrs' },
+      { id: 'item_22', num: '22.', text: 'Alternate Buttock Pain: Deep gluteal pain shifting sides' },
+      { id: 'item_23', num: '23.', text: 'Enthesitis: Heel pain / Achilles tendonitis or plantar fasciitis' },
+      { id: 'item_24', num: '24.', text: 'Dactylitis ("Sausage Digit"): Diffuse swelling of an entire finger/toe' },
+      { id: 'item_25', num: '25.', text: 'Psoriasis: Current/past personal skin lesions or nail pitting' },
+      { id: 'item_26', num: '26.', text: 'Ocular Inflammation: History of painful red eye / recurrent uveitis' },
+      { id: 'item_27', num: '27.', text: 'IBD Association: Chronic diarrhea, blood in stool, abdominal pain' },
+      { id: 'item_28', num: '28.', text: 'GCA (Age > 50): New headache, jaw claudication, visual loss, scalp tenderness' },
+      { id: 'item_29', num: '29.', text: 'Renal/Pulmonary: Hematuria / dark frothy urine, unexplained hemoptysis' },
+      { id: 'item_30', num: '30.', text: 'Neurological: Foot drop / wrist drop, asymmetric numbness (Mononeuritis)' }
+    ];
+
+    const SECTION_4_COMORBIDITIES = [
+      { id: 'item_31', num: '31.', text: 'Peptic Ulcer Disease / GI Bleed (NSAID caution)' },
+      { id: 'item_32', num: '32.', text: 'Chronic Kidney Disease (NSAID/Methotrexate caution)' },
+      { id: 'item_33', num: '33.', text: 'Liver Disease / Hepatitis B or C screening' },
+      { id: 'item_34', num: '34.', text: 'Tuberculosis history / Exposure (Prior to Biologics)' },
+      { id: 'item_35', num: '35.', text: 'Diabetes / Hypertension / Ischemic Heart Disease' }
+    ];
+
+    const SECTION_4_FAMILY = [
+      { id: 'item_36', num: '36.', text: 'Rheumatoid Arthritis (RA)' },
+      { id: 'item_37', num: '37.', text: 'Systemic Lupus Erythematosus (SLE)' },
+      { id: 'item_38', num: '38.', text: 'Ankylosing Spondylitis / Psoriasis / IBD' }
+    ];
+
+    const SECTION_5_ROS = [
+      { category: 'General', items: [
+        { id: 'item_39', num: '39.', text: 'Fever' },
+        { id: 'item_40', num: '40.', text: 'Weight loss' },
+        { id: 'item_41', num: '41.', text: 'Fatigue' },
+        { id: 'item_42', num: '42.', text: 'Night sweat' }
+      ]},
+      { category: 'Musculoskeletal', items: [
+        { id: 'item_43', num: '43.', text: 'Joint pain' },
+        { id: 'item_44', num: '44.', text: 'Stiffness' },
+        { id: 'item_45', num: '45.', text: 'Swelling' },
+        { id: 'item_46', num: '46.', text: 'Weakness' },
+        { id: 'item_47', num: '47.', text: 'Myalgia' },
+        { id: 'item_48', num: '48.', text: 'Bone pain' }
+      ]},
+      { category: 'Cardiovascular', items: [
+        { id: 'item_49', num: '49.', text: 'Chest pain' },
+        { id: 'item_50', num: '50.', text: 'Palpitation' },
+        { id: 'item_51', num: '51.', text: 'Edema' },
+        { id: 'item_52', num: '52.', text: 'SOB on exertion' },
+        { id: 'item_53', num: '53.', text: 'Orthopnea' },
+        { id: 'item_54', num: '54.', text: 'PND' }
+      ]},
+      { category: 'Respiratory', items: [
+        { id: 'item_55', num: '55.', text: 'SOB' },
+        { id: 'item_56', num: '56.', text: 'Cough' },
+        { id: 'item_57', num: '57.', text: 'Wheezing' }
+      ]},
+      { category: 'GIT', items: [
+        { id: 'item_58', num: '58.', text: 'Abdominal pain' },
+        { id: 'item_59', num: '59.', text: 'Nausea' },
+        { id: 'item_60', num: '60.', text: 'Vomiting' },
+        { id: 'item_61', num: '61.', text: 'Diarrhea' },
+        { id: 'item_62', num: '62.', text: 'Constipation' }
+      ]},
+      { category: 'Genitourinary', items: [
+        { id: 'item_63', num: '63.', text: 'Dysuria' },
+        { id: 'item_64', num: '64.', text: 'Frequency' },
+        { id: 'item_65', num: '65.', text: 'Hematuria' },
+        { id: 'item_66', num: '66.', text: 'Dribbling' },
+        { id: 'item_67', num: '67.', text: 'Urgency' }
+      ]},
+      { category: 'Neurological', items: [
+        { id: 'item_68', num: '68.', text: 'Headache' },
+        { id: 'item_69', num: '69.', text: 'Dizziness' },
+        { id: 'item_70', num: '70.', text: 'Numbness' },
+        { id: 'item_71', num: '71.', text: 'Seizure' }
+      ]},
+      { category: 'Endocrine', items: [
+        { id: 'item_72', num: '72.', text: 'Polyuria' },
+        { id: 'item_73', num: '73.', text: 'Polydipsia' },
+        { id: 'item_74', num: '74.', text: 'Cold/heat intolerance' }
+      ]},
+      { category: 'Psychiatrics', items: [
+        { id: 'item_75', num: '75.', text: 'Anxiety' },
+        { id: 'item_76', num: '76.', text: 'Depression' },
+        { id: 'item_77', num: '77.', text: 'Sleep disturbance' }
+      ]},
+      { category: 'ENT', items: [
+        { id: 'item_78', num: '78.', text: 'Vision change' },
+        { id: 'item_79', num: '79.', text: 'Hearing loss' },
+        { id: 'item_80', num: '80.', text: 'Sore throat' }
+      ]},
+      { category: 'Skin', items: [
+        { id: 'item_81', num: '81.', text: 'Rash' },
+        { id: 'item_82', num: '82.', text: 'Itching' }
+      ]}
+    ];
+
+    // Master list of all 82 items for quick lookup
+    const ALL_ITEMS = [
+      ...SECTION_3_A,
+      ...SECTION_3_B,
+      ...SECTION_3_C,
+      ...SECTION_4_COMORBIDITIES,
+      ...SECTION_4_FAMILY,
+      ...SECTION_5_ROS.flatMap(cat => cat.items)
+    ];
+
+    /* ================= STATE ================= */
+    let patients = [];
+    let currentRecordId = null; // null if creating new, string if editing
+    let currentTriStateData = {}; // map of item_1..item_82 -> "", "✓", "✗"
+
+    /* ================= INITIALIZATION ================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initDoctorName();
+      loadPatientsFromStorage();
+      renderScreeningInputs();
+      setupEventListeners();
+      registerServiceWorker();
+      renderPatientList();
+    });
+
+    /* ================= DOCTOR NAME MANAGEMENT ================= */
+    function formatDoctorDisplay(rawName) {
+      if (!rawName) return '';
+      const trimmed = rawName.trim();
+      if (!trimmed) return '';
+      const drMatch = trimmed.match(/^dr\.?\s*/i);
+      if (drMatch) {
+        const rest = trimmed.slice(drMatch[0].length);
+        return `Dr. ${rest}`;
+      }
+      return `Dr. ${trimmed}`;
+    }
+
+    function initDoctorName() {
+      const savedName = localStorage.getItem(DOCTOR_NAME_KEY);
+      if (savedName && savedName.trim()) {
+        document.getElementById('header-doctor-name').textContent = formatDoctorDisplay(savedName);
+      } else {
+        openDoctorSetupModal();
+      }
+    }
+
+    function openDoctorSetupModal() {
+      const current = localStorage.getItem(DOCTOR_NAME_KEY) || '';
+      const input = document.getElementById('inp-doctor-name');
+      input.value = current;
+      document.getElementById('doctor-setup-modal').classList.add('active');
+      setTimeout(() => input.focus(), 100);
+    }
+
+    /* ================= THEME SYSTEM ================= */
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+      setTheme(savedTheme);
+    }
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        document.getElementById('btn-theme-toggle').textContent = '🌙';
+        document.getElementById('btn-form-theme-toggle').textContent = '🌙';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        document.getElementById('btn-theme-toggle').textContent = '☀️';
+        document.getElementById('btn-form-theme-toggle').textContent = '☀️';
+      }
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    }
+
+    /* ================= STORAGE ================= */
+    function loadPatientsFromStorage() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        patients = data ? JSON.parse(data) : [];
+      } catch (e) {
+        console.error('Failed to load records:', e);
+        patients = [];
+      }
+    }
+
+    function savePatientsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+      } catch (e) {
+        console.error('Failed to save records:', e);
+        showToast('Error saving data to local storage.');
+      }
+    }
+
+    /* ================= DOM RENDER HELPERS ================= */
+    function renderScreeningInputs() {
+      // Render Section 3
+      renderTriStateList(SECTION_3_A, 'list-screening-A');
+      renderTriStateList(SECTION_3_B, 'list-screening-B');
+      renderTriStateList(SECTION_3_C, 'list-screening-C');
+
+      // Render Section 4
+      renderTriStateList(SECTION_4_COMORBIDITIES, 'list-past-history');
+      renderTriStateList(SECTION_4_FAMILY, 'list-family-history');
+
+      // Render Section 5
+      const rosContainer = document.getElementById('container-ros');
+      rosContainer.innerHTML = '';
+      SECTION_5_ROS.forEach(cat => {
+        const subTitle = document.createElement('div');
+        subTitle.className = 'section-subtitle';
+        subTitle.textContent = cat.category;
+        rosContainer.appendChild(subTitle);
+
+        const listDiv = document.createElement('div');
+        listDiv.className = 'screening-list';
+        cat.items.forEach(item => {
+          listDiv.appendChild(createTriStateItemElement(item));
+        });
+        rosContainer.appendChild(listDiv);
+      });
+    }
+
+    function renderTriStateList(items, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      items.forEach(item => {
+        container.appendChild(createTriStateItemElement(item));
+      });
+    }
+
+    function createTriStateItemElement(item) {
+      const div = document.createElement('div');
+      div.className = 'screening-item';
+
+      const label = document.createElement('div');
+      label.className = 'screening-text';
+      label.innerHTML = `<span class="screening-num">${item.num}</span> ${escapeHtml(item.text)}`;
+
+      const group = document.createElement('div');
+      group.className = 'tristate-group';
+      group.dataset.itemId = item.id;
+
+      const btnBlank = document.createElement('button');
+      btnBlank.type = 'button';
+      btnBlank.className = 'tristate-opt opt-blank active';
+      btnBlank.dataset.val = '';
+      btnBlank.textContent = '—';
+      btnBlank.title = 'Unselected';
+
+      const btnYes = document.createElement('button');
+      btnYes.type = 'button';
+      btnYes.className = 'tristate-opt opt-yes';
+      btnYes.dataset.val = '✓';
+      btnYes.textContent = '✓';
+      btnYes.title = 'Positive / Yes';
+
+      const btnNo = document.createElement('button');
+      btnNo.type = 'button';
+      btnNo.className = 'tristate-opt opt-no';
+      btnNo.dataset.val = '✗';
+      btnNo.textContent = '✗';
+      btnNo.title = 'Negative / No';
+
+      btnBlank.addEventListener('click', () => setTriStateValue(item.id, ''));
+      btnYes.addEventListener('click', () => setTriStateValue(item.id, '✓'));
+      btnNo.addEventListener('click', () => setTriStateValue(item.id, '✗'));
+
+      group.appendChild(btnBlank);
+      group.appendChild(btnYes);
+      group.appendChild(btnNo);
+
+      div.appendChild(label);
+      div.appendChild(group);
+      return div;
+    }
+
+    function setTriStateValue(itemId, val) {
+      currentTriStateData[itemId] = val;
+      updateTriStateUI(itemId, val);
+      updateAccordionIndicators();
+      autoSaveDraft();
+    }
+
+    function updateTriStateUI(itemId, val) {
+      const group = document.querySelector(`.tristate-group[data-item-id="${itemId}"]`);
+      if (!group) return;
+      const buttons = group.querySelectorAll('.tristate-opt');
+      buttons.forEach(btn => {
+        if (btn.dataset.val === val) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      const row = group.closest('.screening-item');
+      if (row) {
+        row.classList.remove('row-yes', 'row-no');
+        if (val === '✓') {
+          row.classList.add('row-yes');
+        } else if (val === '✗') {
+          row.classList.add('row-no');
+        }
+      }
+    }
+
+    /* ================= ACCORDION ENGINE ================= */
+    function toggleAccordion(id) {
+      const item = document.getElementById(id);
+      if (!item) return;
+      item.classList.toggle('open');
+      item.classList.toggle('active', item.classList.contains('open'));
+    }
+
+    function updateAccordionIndicators() {
+      // 1. Header
+      const name = document.getElementById('inp-name').value.trim();
+      const fileNo = document.getElementById('inp-file-no').value.trim();
+      setDot('dot-header', !!(name || fileNo));
+
+      // 2. Chief Complaint
+      const cc = document.getElementById('inp-chief-complaint').value.trim();
+      setDot('dot-sec1', !!cc);
+
+      // 3. HPI
+      const hpi = document.getElementById('inp-hpi').value.trim();
+      setDot('dot-sec2', !!hpi);
+
+      // 4. Critical Screening (30 items)
+      const sec3Count = countFilledTriStates(['item_1', 'item_30']);
+      setDot('dot-sec3', sec3Count > 0);
+      document.getElementById('badge-sec3').textContent = `${sec3Count}/30`;
+
+      // 5. Section 4 (8 tri-state items + meds)
+      const sec4Count = countFilledTriStates(['item_31', 'item_38']);
+      const meds = document.getElementById('inp-medications').value.trim();
+      setDot('dot-sec4', sec4Count > 0 || !!meds);
+      document.getElementById('badge-sec4').textContent = `${sec4Count}/8`;
+
+      // 6. Section 5 ROS (44 items)
+      const sec5Count = countFilledTriStates(['item_39', 'item_82']);
+      setDot('dot-sec5', sec5Count > 0);
+      document.getElementById('badge-sec5').textContent = `${sec5Count}/44`;
+
+      // 7. Section 6 Vitals
+      const bp = document.getElementById('inp-vital-bp').value.trim();
+      const pr = document.getElementById('inp-vital-pr').value.trim();
+      const temp = document.getElementById('inp-vital-temp').value.trim();
+      const spo2 = document.getElementById('inp-vital-spo2').value.trim();
+      setDot('dot-sec6', !!(bp || pr || temp || spo2));
+
+      // 8. Section 7 Investigations
+      const inv = document.getElementById('inp-investigations').value.trim();
+      setDot('dot-sec7', !!inv);
+
+      // 9. Section 8 Prescription
+      const rx = document.getElementById('inp-prescription').value.trim();
+      setDot('dot-sec8', !!rx);
+    }
+
+    function setDot(dotId, hasData) {
+      const dot = document.getElementById(dotId);
+      if (dot) {
+        if (hasData) dot.classList.add('has-data');
+        else dot.classList.remove('has-data');
+      }
+    }
+
+    function countFilledTriStates(range) {
+      let count = 0;
+      const startNum = parseInt(range[0].replace('item_', ''));
+      const endNum = parseInt(range[1].replace('item_', ''));
+      for (let i = startNum; i <= endNum; i++) {
+        if (currentTriStateData[`item_${i}`]) {
+          count++;
+        }
+      }
+      return count;
+    }
+
+    /* ================= PATIENT LIST VIEW ================= */
+    function renderPatientList() {
+      const container = document.getElementById('patient-list-container');
+      const searchQuery = (document.getElementById('search-input').value || '').toLowerCase().trim();
+
+      const filtered = patients.filter(p => {
+        if (!searchQuery) return true;
+        try {
+          const nameStr = (p.name || '').toLowerCase();
+          const fileStr = (p.fileNo || '').toLowerCase();
+          const phoneStr = (p.phone || '').toLowerCase();
+          return nameStr.includes(searchQuery) || fileStr.includes(searchQuery) || phoneStr.includes(searchQuery);
+        } catch (err) {
+          return false;
+        }
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">${searchQuery ? 'No matching patients found' : 'No patient records yet'}</div>
+            <div class="empty-subtitle">${searchQuery ? 'Try a different name, File No., or Phone number.' : 'Click "Add New Patient" to begin documenting clinical intake.'}</div>
+            ${!searchQuery ? `<button class="icon-btn btn-primary-icon" title="Add New Patient" aria-label="Add New Patient" onclick="openNewPatientForm()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>` : ''}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      filtered.sort((a, b) => new Date(b.updatedAt || b.visitDate || 0) - new Date(a.updatedAt || a.visitDate || 0));
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'patient-card';
+
+        const showAdded = p.createdAt ? `<div>Added on: ${escapeHtml(formatExactTimestamp(p.createdAt))}</div>` : '';
+        const showEdited = (p.updatedAt && p.updatedAt !== p.createdAt) ? `<div>Last edited: ${escapeHtml(formatExactTimestamp(p.updatedAt))}</div>` : '';
+
+        card.innerHTML = `
+          <div>
+            <div class="patient-card-header">
+              <div class="patient-name">${escapeHtml(p.name || 'Unnamed Patient')}</div>
+              <span class="patient-file-badge">${escapeHtml(p.fileNo || 'NO-FILE')}</span>
+            </div>
+            <div class="patient-details" style="margin-top: 8px;">
+              <span class="patient-detail-item">👤 ${escapeHtml(p.ageSex || 'Age/Sex N/A')}</span>
+              <span class="patient-detail-item">📅 ${escapeHtml(formatDateDisplay(p.visitDate))}</span>
+              ${p.phone ? `<span class="patient-detail-item">📞 ${escapeHtml(p.phone)}</span>` : ''}
+            </div>
+            <div class="patient-timestamps">
+              ${showAdded}
+              ${showEdited}
+            </div>
+          </div>
+          <div class="patient-card-actions">
+            <button class="icon-btn" title="Download Patient CSV" aria-label="Download Patient CSV" onclick="event.stopPropagation(); downloadSingleCSVById('${p.id}')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+            <button class="icon-btn" title="Share Patient CSV" aria-label="Share Patient CSV" onclick="event.stopPropagation(); shareSingleCSVById('${p.id}')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+            <button class="icon-btn btn-danger-icon" title="Delete Record" aria-label="Delete Record" onclick="event.stopPropagation(); confirmDeletePatient('${p.id}')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          openEditPatientForm(p.id);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    /* ================= FORM NAVIGATION & LOGIC ================= */
+    function openNewPatientForm() {
+      currentRecordId = null;
+      resetFormInputs();
+
+      // Check if draft exists
+      const draft = localStorage.getItem(DRAFT_KEY);
+      if (draft) {
+        try {
+          const draftObj = JSON.parse(draft);
+          if (draftObj && (draftObj.name || draftObj.fileNo)) {
+            showModal(
+              'Restore Unsaved Draft?',
+              'An unsaved draft was found. Would you like to restore it or start fresh?',
+              () => {
+                populateFormWithData(draftObj);
+                showFormView('New Patient (Restored)');
+              },
+              () => {
+                localStorage.removeItem(DRAFT_KEY);
+                showFormView('New Patient');
+              },
+              'Restore Draft',
+              'Start Fresh'
+            );
+            return;
+          }
+        } catch (e) {
+          localStorage.removeItem(DRAFT_KEY);
+        }
+      }
+
+      showFormView('New Patient');
+    }
+
+    function openEditPatientForm(id) {
+      const patient = patients.find(p => p.id === id);
+      if (!patient) return;
+      currentRecordId = id;
+      resetFormInputs();
+      populateFormWithData(patient);
+      showFormView(`Editing: ${patient.name || patient.fileNo}`);
+    }
+
+    function showFormView(title) {
+      document.getElementById('view-list').classList.remove('active');
+      document.getElementById('view-form').classList.add('active');
+      document.getElementById('list-header-actions').style.display = 'none';
+      document.getElementById('form-header-actions').style.display = 'flex';
+      document.getElementById('form-bottom-bar').style.display = 'flex';
+      document.getElementById('form-mode-badge').textContent = title;
+      window.scrollTo(0, 0);
+      updateAccordionIndicators();
+    }
+
+    function showListView() {
+      document.getElementById('view-form').classList.remove('active');
+      document.getElementById('view-list').classList.add('active');
+      document.getElementById('list-header-actions').style.display = 'flex';
+      document.getElementById('form-header-actions').style.display = 'none';
+      document.getElementById('form-bottom-bar').style.display = 'none';
+      renderPatientList();
+      window.scrollTo(0, 0);
+    }
+
+    function resetFormInputs() {
+      document.getElementById('patient-form').reset();
+      document.getElementById('inp-visit-date').value = new Date().toISOString().split('T')[0];
+      currentTriStateData = {};
+
+      ALL_ITEMS.forEach(item => {
+        currentTriStateData[item.id] = '';
+        updateTriStateUI(item.id, '');
+      });
+
+      const tsContainer = document.getElementById('form-timestamp-info');
+      if (tsContainer) {
+        tsContainer.style.display = 'none';
+        tsContainer.innerHTML = '';
+      }
+
+      // Collapse all accordions except header
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        if (item.id === 'acc-header') {
+          item.classList.add('open');
+          item.classList.add('active');
+        } else {
+          item.classList.remove('open');
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    function populateFormWithData(record) {
+      document.getElementById('inp-name').value = record.name || '';
+      document.getElementById('inp-file-no').value = record.fileNo || '';
+      document.getElementById('inp-age-sex').value = record.ageSex || '';
+      document.getElementById('inp-visit-date').value = record.visitDate || new Date().toISOString().split('T')[0];
+      document.getElementById('inp-occupation').value = record.occupation || '';
+      document.getElementById('inp-phone').value = record.phone || '';
+
+      document.getElementById('inp-chief-complaint').value = record.chiefComplaint || '';
+      document.getElementById('inp-hpi').value = record.hpi || '';
+      document.getElementById('inp-medications').value = record.medications || '';
+
+      document.getElementById('inp-vital-bp').value = record.vitalBp || '';
+      document.getElementById('inp-vital-pr').value = record.vitalPr || '';
+      document.getElementById('inp-vital-temp').value = record.vitalTemp || '';
+      document.getElementById('inp-vital-spo2').value = record.vitalSpo2 || '';
+
+      document.getElementById('inp-investigations').value = record.investigations || '';
+      document.getElementById('inp-prescription').value = record.prescription || '';
+
+      // Populate Tri-State Items 1..82
+      ALL_ITEMS.forEach(item => {
+        const val = (record.triStates && record.triStates[item.id]) || '';
+        currentTriStateData[item.id] = val;
+        updateTriStateUI(item.id, val);
+      });
+
+      const tsContainer = document.getElementById('form-timestamp-info');
+      if (tsContainer) {
+        let html = '';
+        if (record.createdAt) {
+          html += `<div>Added on: ${escapeHtml(formatExactTimestamp(record.createdAt))}</div>`;
+        }
+        if (record.updatedAt && record.updatedAt !== record.createdAt) {
+          html += `<div style="margin-top: 2px;">Last edited: ${escapeHtml(formatExactTimestamp(record.updatedAt))}</div>`;
+        }
+        if (html) {
+          tsContainer.innerHTML = html;
+          tsContainer.style.display = 'block';
+        } else {
+          tsContainer.style.display = 'none';
+        }
+      }
+
+      updateAccordionIndicators();
+    }
+
+    function collectFormRecord() {
+      const name = document.getElementById('inp-name').value.trim();
+      const fileNo = document.getElementById('inp-file-no').value.trim();
+      const now = new Date().toISOString();
+
+      const existing = currentRecordId ? patients.find(p => p.id === currentRecordId) : null;
+      const createdAt = existing && existing.createdAt ? existing.createdAt : (currentRecordId ? now : undefined);
+
+      const record = {
+        id: currentRecordId || generateUniqueId(),
+        name: name,
+        fileNo: fileNo,
+        ageSex: document.getElementById('inp-age-sex').value.trim(),
+        visitDate: document.getElementById('inp-visit-date').value || new Date().toISOString().split('T')[0],
+        occupation: document.getElementById('inp-occupation').value.trim(),
+        phone: document.getElementById('inp-phone').value.trim(),
+        chiefComplaint: document.getElementById('inp-chief-complaint').value.trim(),
+        hpi: document.getElementById('inp-hpi').value.trim(),
+        medications: document.getElementById('inp-medications').value.trim(),
+        vitalBp: document.getElementById('inp-vital-bp').value.trim(),
+        vitalPr: document.getElementById('inp-vital-pr').value.trim(),
+        vitalTemp: document.getElementById('inp-vital-temp').value.trim(),
+        vitalSpo2: document.getElementById('inp-vital-spo2').value.trim(),
+        investigations: document.getElementById('inp-investigations').value.trim(),
+        prescription: document.getElementById('inp-prescription').value.trim(),
+        triStates: { ...currentTriStateData }
+      };
+
+      if (createdAt) {
+        record.createdAt = createdAt;
+      } else if (!currentRecordId) {
+        record.createdAt = now;
+      }
+
+      if (currentRecordId) {
+        record.updatedAt = now;
+      }
+
+      return record;
+    }
+
+    function savePatientRecord() {
+      const nameInp = document.getElementById('inp-name');
+      const fileNoInp = document.getElementById('inp-file-no');
+
+      if (!nameInp.value.trim()) {
+        showToast('Please enter Patient Name.');
+        openAccordion('acc-header');
+        nameInp.focus();
+        return;
+      }
+
+      if (!fileNoInp.value.trim()) {
+        showToast('Please enter File No.');
+        openAccordion('acc-header');
+        fileNoInp.focus();
+        return;
+      }
+
+      const record = collectFormRecord();
+
+      if (currentRecordId) {
+        const index = patients.findIndex(p => p.id === currentRecordId);
+        if (index !== -1) {
+          patients[index] = record;
+        } else {
+          patients.push(record);
+        }
+      } else {
+        patients.push(record);
+      }
+
+      savePatientsToStorage();
+      localStorage.removeItem(DRAFT_KEY);
+      showToast('Patient record saved successfully!');
+      showListView();
+    }
+
+    function openAccordion(accId) {
+      const el = document.getElementById(accId);
+      if (el) {
+        el.classList.add('open');
+        el.classList.add('active');
+      }
+    }
+
+    function autoSaveDraft() {
+      if (document.getElementById('view-form').classList.contains('active')) {
+        const record = collectFormRecord();
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(record));
+      }
+    }
+
+    function confirmDeletePatient(id) {
+      const p = patients.find(patient => patient.id === id);
+      if (!p) return;
+      showModal(
+        'Delete Patient Record',
+        `Are you sure you want to permanently delete the record for "${p.name || 'this patient'}" (File: ${p.fileNo})?`,
+        () => {
+          patients = patients.filter(patient => patient.id !== id);
+          savePatientsToStorage();
+          showToast('Record deleted.');
+          renderPatientList();
+        },
+        null,
+        'Delete Record',
+        'Cancel'
+      );
+    }
+
+    /* ================= CSV EXPORT & IMPORT ENGINE ================= */
+    // Helper to generate UTF-8 CSV with BOM for exact Arabic/Excel compatibility
+    function generateCSVContent(recordsList) {
+      const headers = [
+        'ID',
+        'Patient_Name',
+        'Age_Sex',
+        'File_No',
+        'Date_Of_Visit',
+        'Occupation',
+        'Phone',
+        'Chief_Complaint',
+        'HPI',
+        ...ALL_ITEMS.map(item => `Item_${item.id.replace('item_', '')}_${item.text.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30)}`),
+        'Current_Medications',
+        'BP',
+        'PR',
+        'Temp',
+        'SpO2',
+        'Investigations',
+        'Prescription',
+        'CreatedAt',
+        'UpdatedAt'
+      ];
+
+      const rows = [headers.map(escapeCSVField).join(',')];
+
+      recordsList.forEach(p => {
+        const row = [
+          p.id || '',
+          p.name || '',
+          p.ageSex || '',
+          p.fileNo || '',
+          p.visitDate || '',
+          p.occupation || '',
+          p.phone || '',
+          p.chiefComplaint || '',
+          p.hpi || '',
+          ...ALL_ITEMS.map(item => (p.triStates && p.triStates[item.id]) || ''),
+          p.medications || '',
+          p.vitalBp || '',
+          p.vitalPr || '',
+          p.vitalTemp || '',
+          p.vitalSpo2 || '',
+          p.investigations || '',
+          p.prescription || '',
+          p.createdAt || '',
+          p.updatedAt || ''
+        ];
+        rows.push(row.map(escapeCSVField).join(','));
+      });
+
+      // Return UTF-8 BOM + content
+      return '\uFEFF' + rows.join('\r\n');
+    }
+
+    function escapeCSVField(val) {
+      if (val === null || val === undefined) return '""';
+      const str = String(val);
+      // Escape internal double quotes by doubling them
+      const escaped = str.replace(/"/g, '""');
+      return `"${escaped}"`;
+    }
+
+    function downloadCSVFile(content, filename) {
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportAllPatientsCSV() {
+      if (patients.length === 0) {
+        showToast('No patient records to export.');
+        return;
+      }
+      const csv = generateCSVContent(patients);
+      const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      downloadCSVFile(csv, `Rheuma_Records_${dateStr}.csv`);
+      showToast(`Exported ${patients.length} patient records.`);
+    }
+
+    function downloadSingleCSVById(id) {
+      const patient = patients.find(p => p.id === id);
+      if (!patient) return;
+      const csv = generateCSVContent([patient]);
+      const cleanName = (patient.name || 'Patient').replace(/[^a-zA-Z0-9]/g, '_');
+      const dateStr = (patient.visitDate || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+      downloadCSVFile(csv, `Patient_${cleanName}_${dateStr}.csv`);
+    }
+
+    async function shareSingleCSVById(id) {
+      const patient = patients.find(p => p.id === id);
+      if (!patient) return;
+
+      const csv = generateCSVContent([patient]);
+      const cleanName = (patient.name || 'Patient').replace(/[^a-zA-Z0-9]/g, '_');
+      const dateStr = (patient.visitDate || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+      const fileName = `Patient_${cleanName}_${dateStr}.csv`;
+
+      if (navigator.canShare && navigator.canShare({ files: [new File([], 'test.csv')] })) {
+        try {
+          const file = new File([csv], fileName, { type: 'text/csv' });
+          await navigator.share({
+            files: [file],
+            title: `Rheumatology Record: ${patient.name}`,
+            text: `Clinical Record for ${patient.name} (File No: ${patient.fileNo})`
+          });
+          showToast('Shared successfully!');
+          return;
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.warn('Share API failed, falling back to download:', err);
+            downloadCSVFile(csv, fileName);
+          }
+          return;
+        }
+      }
+
+      // Fallback
+      downloadCSVFile(csv, fileName);
+    }
+
+    /* Robust Vanilla CSV Parser supporting multiline quoted strings */
+    function parseCSV(text) {
+      // Remove UTF-8 BOM if present
+      if (text.startsWith('\uFEFF')) {
+        text = text.slice(1);
+      }
+
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (insideQuotes) {
+          if (char === '"' && nextChar === '"') {
+            currentCell += '"';
+            i++; // skip next quote
+          } else if (char === '"') {
+            insideQuotes = false;
+          } else {
+            currentCell += char;
+          }
+        } else {
+          if (char === '"') {
+            insideQuotes = true;
+          } else if (char === ',') {
+            currentRow.push(currentCell.trim());
+            currentCell = '';
+          } else if (char === '\r' && nextChar === '\n') {
+            currentRow.push(currentCell.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentCell = '';
+            i++; // skip \n
+          } else if (char === '\n') {
+            currentRow.push(currentCell.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentCell = '';
+          } else {
+            currentCell += char;
+          }
+        }
+      }
+
+      if (currentCell.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rows.push(currentRow);
+      }
+
+      return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
+    }
+
+    function importCSVFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = e.target.result;
+          const matrix = parseCSV(content);
+
+          if (matrix.length < 2) {
+            alert('No valid records found.');
+            return;
+          }
+
+          const headers = matrix[0];
+
+          // Map CSV matrix to patient records
+          const importedRecords = [];
+
+          for (let r = 1; r < matrix.length; r++) {
+            const row = matrix[r];
+            if (row.length < 4) continue; // Invalid row
+
+            const record = {
+              id: getHeaderVal(row, headers, 'ID') || generateUniqueId(),
+              name: getHeaderVal(row, headers, 'Patient_Name') || getHeaderVal(row, headers, 'Name') || '',
+              ageSex: getHeaderVal(row, headers, 'Age_Sex') || '',
+              fileNo: getHeaderVal(row, headers, 'File_No') || '',
+              visitDate: getHeaderVal(row, headers, 'Date_Of_Visit') || getHeaderVal(row, headers, 'VisitDate') || '',
+              occupation: getHeaderVal(row, headers, 'Occupation') || '',
+              phone: getHeaderVal(row, headers, 'Phone') || '',
+              chiefComplaint: getHeaderVal(row, headers, 'Chief_Complaint') || '',
+              hpi: getHeaderVal(row, headers, 'HPI') || '',
+              medications: getHeaderVal(row, headers, 'Current_Medications') || '',
+              vitalBp: getHeaderVal(row, headers, 'BP') || '',
+              vitalPr: getHeaderVal(row, headers, 'PR') || '',
+              vitalTemp: getHeaderVal(row, headers, 'Temp') || '',
+              vitalSpo2: getHeaderVal(row, headers, 'SpO2') || '',
+              investigations: getHeaderVal(row, headers, 'Investigations') || '',
+              prescription: getHeaderVal(row, headers, 'Prescription') || '',
+              createdAt: getHeaderVal(row, headers, 'CreatedAt') || new Date().toISOString(),
+              updatedAt: getHeaderVal(row, headers, 'UpdatedAt') || new Date().toISOString(),
+              triStates: {}
+            };
+
+            // Parse Tri-State items 1..82
+            ALL_ITEMS.forEach(item => {
+              const num = item.id.replace('item_', '');
+              let val = '';
+
+              // Try exact item header prefix match
+              const matchIdx = headers.findIndex(h => h.startsWith(`Item_${num}_`));
+              if (matchIdx !== -1 && row[matchIdx] !== undefined) {
+                val = row[matchIdx];
+              } else {
+                val = getHeaderVal(row, headers, item.id) || '';
+              }
+
+              if (val === '✓' || val === '✗') {
+                record.triStates[item.id] = val;
+              } else {
+                record.triStates[item.id] = '';
+              }
+            });
+
+            if (record.name || record.fileNo) {
+              importedRecords.push(record);
+            }
+          }
+
+          if (importedRecords.length === 0) {
+            showToast('No valid records found in CSV.');
+            return;
+          }
+
+          // Show Import Options Modal (Merge vs Replace All vs Cancel)
+          const importModal = document.getElementById('import-options-modal');
+          document.getElementById('import-modal-body').textContent = `Found ${importedRecords.length} record(s) in CSV. Choose how to import:`;
+
+          const btnCancel = document.getElementById('import-btn-cancel');
+          const btnMerge = document.getElementById('import-btn-merge');
+          const btnReplace = document.getElementById('import-btn-replace');
+
+          const closeImportModal = () => {
+            importModal.classList.remove('active');
+            btnCancel.onclick = null;
+            btnMerge.onclick = null;
+            btnReplace.onclick = null;
+          };
+
+          btnCancel.onclick = () => {
+            closeImportModal();
+          };
+
+          btnMerge.onclick = () => {
+            closeImportModal();
+            let addedCount = 0;
+            let updatedCount = 0;
+
+            importedRecords.forEach(imp => {
+              const existingIdx = patients.findIndex(p => p.id === imp.id || (p.fileNo && p.fileNo === imp.fileNo && p.name === imp.name));
+              if (existingIdx !== -1) {
+                patients[existingIdx] = { ...patients[existingIdx], ...imp };
+                updatedCount++;
+              } else {
+                patients.push(imp);
+                addedCount++;
+              }
+            });
+
+            savePatientsToStorage();
+            renderPatientList();
+            showToast(`Merged: ${addedCount} added, ${updatedCount} updated.`);
+          };
+
+          btnReplace.onclick = () => {
+            closeImportModal();
+            showModal(
+              'Replace All Records?',
+              'WARNING: This will DELETE all existing patient records and replace them with the imported file. This cannot be undone. Continue?',
+              () => {
+                patients = importedRecords;
+                savePatientsToStorage();
+                renderPatientList();
+                showToast(`Replaced all records. ${importedRecords.length} patients imported.`);
+              },
+              null,
+              'Confirm Replace',
+              'Cancel',
+              true
+            );
+          };
+
+          importModal.classList.add('active');
+
+        } catch (err) {
+          console.error('CSV Parsing Error:', err);
+          showToast('Invalid CSV format.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function getHeaderVal(row, headers, key) {
+      const idx = headers.findIndex(h => h.toLowerCase() === key.toLowerCase());
+      if (idx !== -1 && row[idx] !== undefined) {
+        return row[idx].trim();
+      }
+      return '';
+    }
+
+    /* ================= UTILS & EVENT LISTENERS ================= */
+    function setupEventListeners() {
+      // Doctor Name Listeners
+      document.getElementById('doctor-name-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = document.getElementById('inp-doctor-name').value.trim();
+        if (val) {
+          localStorage.setItem(DOCTOR_NAME_KEY, val);
+          document.getElementById('header-doctor-name').textContent = formatDoctorDisplay(val);
+          document.getElementById('doctor-setup-modal').classList.remove('active');
+          showToast('Doctor name saved');
+        }
+      });
+
+      // Theme Toggles
+      document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
+      document.getElementById('btn-form-theme-toggle').addEventListener('click', toggleTheme);
+
+      // Search Input
+      document.getElementById('search-input').addEventListener('input', renderPatientList);
+
+      // Add Patient Button
+      document.getElementById('btn-add-patient').addEventListener('click', openNewPatientForm);
+
+      // Back Button
+      document.getElementById('btn-back-to-list').addEventListener('click', () => {
+        autoSaveDraft();
+        showListView();
+      });
+
+      // Save & Cancel Buttons
+      document.getElementById('btn-save-record').addEventListener('click', savePatientRecord);
+      document.getElementById('btn-cancel-form').addEventListener('click', () => {
+        showListView();
+      });
+
+      // Single Patient Download & Share in Form Header
+      document.getElementById('btn-download-single').addEventListener('click', () => {
+        const record = collectFormRecord();
+        const csv = generateCSVContent([record]);
+        const cleanName = (record.name || 'Patient').replace(/[^a-zA-Z0-9]/g, '_');
+        const dateStr = (record.visitDate || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+        downloadCSVFile(csv, `Patient_${cleanName}_${dateStr}.csv`);
+      });
+
+      document.getElementById('btn-share-single').addEventListener('click', async () => {
+        const record = collectFormRecord();
+        const csv = generateCSVContent([record]);
+        const cleanName = (record.name || 'Patient').replace(/[^a-zA-Z0-9]/g, '_');
+        const dateStr = (record.visitDate || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+        const fileName = `Patient_${cleanName}_${dateStr}.csv`;
+
+        if (navigator.canShare && navigator.canShare({ files: [new File([], 'test.csv')] })) {
+          try {
+            const file = new File([csv], fileName, { type: 'text/csv' });
+            await navigator.share({
+              files: [file],
+              title: `Rheumatology Record: ${record.name || 'Patient'}`,
+              text: `Clinical Record for ${record.name || 'Patient'} (File No: ${record.fileNo})`
+            });
+            showToast('Shared successfully!');
+            return;
+          } catch (e) {
+            if (e.name !== 'AbortError') {
+              downloadCSVFile(csv, fileName);
+            }
+            return;
+          }
+        }
+        downloadCSVFile(csv, fileName);
+      });
+
+      // Export All CSV Button
+      document.getElementById('btn-export-all').addEventListener('click', exportAllPatientsCSV);
+
+      // Import CSV Button & File Input
+      const fileInput = document.getElementById('csv-file-input');
+      document.getElementById('btn-import-csv').addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importCSVFile(e.target.files[0]);
+        }
+      });
+
+      // Auto save draft on form input change
+      const formInputs = document.querySelectorAll('#patient-form input, #patient-form textarea');
+      formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+          updateAccordionIndicators();
+          autoSaveDraft();
+        });
+      });
+
+      window.addEventListener('beforeunload', () => {
+        autoSaveDraft();
+      });
+    }
+
+    function generateUniqueId() {
+      return Date.now().toString(36) + Math.random().toString(36).substring(2, 7);
+    }
+
+    function formatDateDisplay(isoDate) {
+      if (!isoDate) return 'N/A';
+      try {
+        const parts = isoDate.split('-');
+        if (parts.length === 3) {
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+      } catch (e) {}
+      return isoDate;
+    }
+
+    function formatExactTimestamp(isoString) {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      if (isNaN(date.getTime())) return isoString;
+
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      const dayName = days[date.getDay()];
+      const dayNum = date.getDate();
+      const monthName = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      let hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+
+      return `${dayName}, ${dayNum} ${monthName} ${year} at ${hours}:${minutes} ${ampm}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* Modal System */
+    function showModal(title, bodyText, onConfirm, onCancel, confirmBtnText = 'Confirm', cancelBtnText = 'Cancel', isDanger = false) {
+      const modal = document.getElementById('app-modal');
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').textContent = bodyText;
+
+      const confirmBtn = document.getElementById('modal-btn-confirm');
+      const cancelBtn = document.getElementById('modal-btn-cancel');
+
+      confirmBtn.textContent = confirmBtnText;
+      cancelBtn.textContent = cancelBtnText;
+
+      if (isDanger) {
+        confirmBtn.className = 'btn-danger';
+      } else {
+        confirmBtn.className = 'btn-text-icon btn-primary';
+      }
+
+      const closeHandler = () => {
+        modal.classList.remove('active');
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+      };
+
+      confirmBtn.onclick = () => {
+        closeHandler();
+        if (onConfirm) onConfirm();
+      };
+
+      cancelBtn.onclick = () => {
+        closeHandler();
+        if (onCancel) onCancel();
+      };
+
+      modal.classList.add('active');
+    }
+
+    /* Toast Notification */
+    function showToast(message) {
+      const toast = document.getElementById('toast-message');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    /* PWA Service Worker Registration */
+    function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.log('SW reg error:', err));
+        });
+      }
+    }
+  </script>
+</body>
+</html>
