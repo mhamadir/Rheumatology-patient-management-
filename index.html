@@ -1211,6 +1211,10 @@
                   <input type="number" step="1" id="inp-vital-spo2" class="form-input" placeholder="e.g. 98" inputmode="numeric" />
                 </div>
               </div>
+              <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label" for="physicalExamNotes" style="font-weight: 700;">Physical Examination Notes</label>
+                <textarea id="physicalExamNotes" name="physicalExamNotes" class="form-textarea" rows="4" placeholder="Enter physical examination findings, joint exam notes, systemic findings..."></textarea>
+              </div>
             </div>
           </div>
 
@@ -1700,7 +1704,8 @@
       const pr = document.getElementById('inp-vital-pr').value.trim();
       const temp = document.getElementById('inp-vital-temp').value.trim();
       const spo2 = document.getElementById('inp-vital-spo2').value.trim();
-      setDot('dot-sec6', !!(bp || pr || temp || spo2));
+      const physNotes = (document.getElementById('physicalExamNotes') || document.getElementById('inp-physical-exam-notes'))?.value?.trim() || '';
+      setDot('dot-sec6', !!(bp || pr || temp || spo2 || physNotes));
 
       // 8. Section 7 Investigations
       const inv = document.getElementById('inp-investigations').value.trim();
@@ -1916,6 +1921,8 @@
       document.getElementById('inp-vital-pr').value = record.vitalPr || '';
       document.getElementById('inp-vital-temp').value = record.vitalTemp || '';
       document.getElementById('inp-vital-spo2').value = record.vitalSpo2 || '';
+      const physNotesElem = document.getElementById('physicalExamNotes') || document.getElementById('inp-physical-exam-notes');
+      if (physNotesElem) physNotesElem.value = record.physicalExamNotes || '';
 
       document.getElementById('inp-investigations').value = record.investigations || '';
       document.getElementById('inp-prescription').value = record.prescription || '';
@@ -1970,6 +1977,7 @@
         vitalPr: document.getElementById('inp-vital-pr').value.trim(),
         vitalTemp: document.getElementById('inp-vital-temp').value.trim(),
         vitalSpo2: document.getElementById('inp-vital-spo2').value.trim(),
+        physicalExamNotes: (document.getElementById('physicalExamNotes') || document.getElementById('inp-physical-exam-notes'))?.value?.trim() || '',
         investigations: document.getElementById('inp-investigations').value.trim(),
         prescription: document.getElementById('inp-prescription').value.trim(),
         triStates: { ...currentTriStateData }
@@ -2077,6 +2085,7 @@
         'PR',
         'Temp',
         'SpO2',
+        'PhysicalExamNotes',
         'Investigations',
         'Prescription',
         'CreatedAt',
@@ -2102,6 +2111,7 @@
           p.vitalPr || '',
           p.vitalTemp || '',
           p.vitalSpo2 || '',
+          p.physicalExamNotes || '',
           p.investigations || '',
           p.prescription || '',
           p.createdAt || '',
@@ -2278,6 +2288,7 @@
               vitalPr: getHeaderVal(row, headers, 'PR') || '',
               vitalTemp: getHeaderVal(row, headers, 'Temp') || '',
               vitalSpo2: getHeaderVal(row, headers, 'SpO2') || '',
+              physicalExamNotes: getHeaderVal(row, headers, 'PhysicalExamNotes') || getHeaderVal(row, headers, 'Physical_Exam_Notes') || '',
               investigations: getHeaderVal(row, headers, 'Investigations') || '',
               prescription: getHeaderVal(row, headers, 'Prescription') || '',
               createdAt: getHeaderVal(row, headers, 'CreatedAt') || new Date().toISOString(),
