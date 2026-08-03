@@ -1011,9 +1011,10 @@
     <div class="header-actions">
       <!-- List View Header Actions -->
       <div id="list-header-actions" class="header-actions">
-        <button class="icon-btn" id="btn-import-csv" title="Import CSV" aria-label="Import CSV">
+        <label for="importFile" class="icon-btn" id="btn-import-csv" title="Import CSV" aria-label="Import CSV" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-        </button>
+        </label>
+        <input type="file" id="importFile" accept=".csv,text/csv,application/vnd.ms-excel,application/csv" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" />
         <button class="icon-btn" id="btn-export-all" title="Export All CSV" aria-label="Export All CSV">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
         </button>
@@ -1351,9 +1352,6 @@
       <span>💾</span> Save Patient Record
     </button>
   </div>
-
-  <!-- Hidden CSV Input -->
-  <input type="file" id="csv-file-input" accept=".csv,text/csv" />
 
   <!-- Modal Component -->
   <div class="modal-overlay" id="app-modal">
@@ -2369,155 +2367,150 @@
       return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
     }
 
-    function importCSVFile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const content = e.target.result;
-          const matrix = parseCSV(content);
+    function processImportedCSV(content) {
+      try {
+        const matrix = parseCSV(content);
 
-          if (matrix.length < 2) {
-            alert('No valid records found.');
-            return;
-          }
-
-          const headers = matrix[0];
-
-          // Map CSV matrix to patient records
-          const importedRecords = [];
-
-          for (let r = 1; r < matrix.length; r++) {
-            const row = matrix[r];
-            if (row.length < 4) continue; // Invalid row
-
-            const record = {
-              id: getHeaderVal(row, headers, 'ID') || generateUniqueId(),
-              name: getHeaderVal(row, headers, 'Patient_Name') || getHeaderVal(row, headers, 'Name') || '',
-              ageSex: getHeaderVal(row, headers, 'Age_Sex') || '',
-              fileNo: getHeaderVal(row, headers, 'File_No') || '',
-              visitDate: getHeaderVal(row, headers, 'Date_Of_Visit') || getHeaderVal(row, headers, 'VisitDate') || '',
-              occupation: getHeaderVal(row, headers, 'Occupation') || '',
-              phone: getHeaderVal(row, headers, 'Phone') || '',
-              smoking: getHeaderVal(row, headers, 'Smoking') || '',
-              alcohol: getHeaderVal(row, headers, 'Alcohol') || '',
-              drugUse: getHeaderVal(row, headers, 'DrugUse') || getHeaderVal(row, headers, 'Drug_Use') || '',
-              dietExercise: getHeaderVal(row, headers, 'DietExercise') || getHeaderVal(row, headers, 'Diet_Exercise') || '',
-              chronicIllnesses: getHeaderVal(row, headers, 'ChronicIllnesses') || getHeaderVal(row, headers, 'Chronic_Illnesses') || '',
-              previousHospitalization: getHeaderVal(row, headers, 'PreviousHospitalization') || getHeaderVal(row, headers, 'Previous_Hospitalization') || '',
-              allergies: getHeaderVal(row, headers, 'Allergies') || '',
-              currentMedications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
-              medications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
-              surgicalHistory: getHeaderVal(row, headers, 'SurgicalHistory') || getHeaderVal(row, headers, 'Surgical_History') || '',
-              chiefComplaint: getHeaderVal(row, headers, 'Chief_Complaint') || '',
-              hpi: getHeaderVal(row, headers, 'HPI') || '',
-              vitalBp: getHeaderVal(row, headers, 'BP') || '',
-              vitalPr: getHeaderVal(row, headers, 'PR') || '',
-              vitalTemp: getHeaderVal(row, headers, 'Temp') || '',
-              vitalSpo2: getHeaderVal(row, headers, 'SpO2') || '',
-              physicalExamNotes: getHeaderVal(row, headers, 'PhysicalExamNotes') || getHeaderVal(row, headers, 'Physical_Exam_Notes') || '',
-              investigations: getHeaderVal(row, headers, 'Investigations') || '',
-              prescription: getHeaderVal(row, headers, 'Prescription') || '',
-              createdAt: getHeaderVal(row, headers, 'CreatedAt') || new Date().toISOString(),
-              updatedAt: getHeaderVal(row, headers, 'UpdatedAt') || new Date().toISOString(),
-              triStates: {}
-            };
-
-            // Parse Tri-State items 1..82
-            ALL_ITEMS.forEach(item => {
-              const num = item.id.replace('item_', '');
-              let val = '';
-
-              // Try exact item header prefix match
-              const matchIdx = headers.findIndex(h => h.startsWith(`Item_${num}_`));
-              if (matchIdx !== -1 && row[matchIdx] !== undefined) {
-                val = row[matchIdx];
-              } else {
-                val = getHeaderVal(row, headers, item.id) || '';
-              }
-
-              if (val === '✓' || val === '✗') {
-                record.triStates[item.id] = val;
-              } else {
-                record.triStates[item.id] = '';
-              }
-            });
-
-            if (record.name || record.fileNo) {
-              importedRecords.push(record);
-            }
-          }
-
-          if (importedRecords.length === 0) {
-            showToast('No valid records found in CSV.');
-            return;
-          }
-
-          // Show Import Options Modal (Merge vs Replace All vs Cancel)
-          const importModal = document.getElementById('import-options-modal');
-          document.getElementById('import-modal-body').textContent = `Found ${importedRecords.length} record(s) in CSV. Choose how to import:`;
-
-          const btnCancel = document.getElementById('import-btn-cancel');
-          const btnMerge = document.getElementById('import-btn-merge');
-          const btnReplace = document.getElementById('import-btn-replace');
-
-          const closeImportModal = () => {
-            importModal.classList.remove('active');
-            btnCancel.onclick = null;
-            btnMerge.onclick = null;
-            btnReplace.onclick = null;
-          };
-
-          btnCancel.onclick = () => {
-            closeImportModal();
-          };
-
-          btnMerge.onclick = () => {
-            closeImportModal();
-            let addedCount = 0;
-            let updatedCount = 0;
-
-            importedRecords.forEach(imp => {
-              const existingIdx = patients.findIndex(p => p.id === imp.id || (p.fileNo && p.fileNo === imp.fileNo && p.name === imp.name));
-              if (existingIdx !== -1) {
-                patients[existingIdx] = { ...patients[existingIdx], ...imp };
-                updatedCount++;
-              } else {
-                patients.push(imp);
-                addedCount++;
-              }
-            });
-
-            savePatientsToStorage();
-            renderPatientList();
-            showToast(`Merged: ${addedCount} added, ${updatedCount} updated.`);
-          };
-
-          btnReplace.onclick = () => {
-            closeImportModal();
-            showModal(
-              'Replace All Records?',
-              'WARNING: This will DELETE all existing patient records and replace them with the imported file. This cannot be undone. Continue?',
-              () => {
-                patients = importedRecords;
-                savePatientsToStorage();
-                renderPatientList();
-                showToast(`Replaced all records. ${importedRecords.length} patients imported.`);
-              },
-              null,
-              'Confirm Replace',
-              'Cancel',
-              true
-            );
-          };
-
-          importModal.classList.add('active');
-
-        } catch (err) {
-          console.error('CSV Parsing Error:', err);
-          showToast('Invalid CSV format.');
+        if (!matrix || matrix.length < 2) {
+          alert('No valid records found in CSV.');
+          return;
         }
-      };
-      reader.readAsText(file);
+
+        const headers = matrix[0];
+
+        // Map CSV matrix to patient records
+        const importedRecords = [];
+
+        for (let r = 1; r < matrix.length; r++) {
+          const row = matrix[r];
+          if (row.length < 4) continue; // Invalid row
+
+          const record = {
+            id: getHeaderVal(row, headers, 'ID') || generateUniqueId(),
+            name: getHeaderVal(row, headers, 'Patient_Name') || getHeaderVal(row, headers, 'Name') || '',
+            ageSex: getHeaderVal(row, headers, 'Age_Sex') || '',
+            fileNo: getHeaderVal(row, headers, 'File_No') || '',
+            visitDate: getHeaderVal(row, headers, 'Date_Of_Visit') || getHeaderVal(row, headers, 'VisitDate') || '',
+            occupation: getHeaderVal(row, headers, 'Occupation') || '',
+            phone: getHeaderVal(row, headers, 'Phone') || '',
+            smoking: getHeaderVal(row, headers, 'Smoking') || '',
+            alcohol: getHeaderVal(row, headers, 'Alcohol') || '',
+            drugUse: getHeaderVal(row, headers, 'DrugUse') || getHeaderVal(row, headers, 'Drug_Use') || '',
+            dietExercise: getHeaderVal(row, headers, 'DietExercise') || getHeaderVal(row, headers, 'Diet_Exercise') || '',
+            chronicIllnesses: getHeaderVal(row, headers, 'ChronicIllnesses') || getHeaderVal(row, headers, 'Chronic_Illnesses') || '',
+            previousHospitalization: getHeaderVal(row, headers, 'PreviousHospitalization') || getHeaderVal(row, headers, 'Previous_Hospitalization') || '',
+            allergies: getHeaderVal(row, headers, 'Allergies') || '',
+            currentMedications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
+            medications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
+            surgicalHistory: getHeaderVal(row, headers, 'SurgicalHistory') || getHeaderVal(row, headers, 'Surgical_History') || '',
+            chiefComplaint: getHeaderVal(row, headers, 'Chief_Complaint') || '',
+            hpi: getHeaderVal(row, headers, 'HPI') || '',
+            vitalBp: getHeaderVal(row, headers, 'BP') || '',
+            vitalPr: getHeaderVal(row, headers, 'PR') || '',
+            vitalTemp: getHeaderVal(row, headers, 'Temp') || '',
+            vitalSpo2: getHeaderVal(row, headers, 'SpO2') || '',
+            physicalExamNotes: getHeaderVal(row, headers, 'PhysicalExamNotes') || getHeaderVal(row, headers, 'Physical_Exam_Notes') || '',
+            investigations: getHeaderVal(row, headers, 'Investigations') || '',
+            prescription: getHeaderVal(row, headers, 'Prescription') || '',
+            createdAt: getHeaderVal(row, headers, 'CreatedAt') || new Date().toISOString(),
+            updatedAt: getHeaderVal(row, headers, 'UpdatedAt') || new Date().toISOString(),
+            triStates: {}
+          };
+
+          // Parse Tri-State items 1..82
+          ALL_ITEMS.forEach(item => {
+            const num = item.id.replace('item_', '');
+            let val = '';
+
+            // Try exact item header prefix match
+            const matchIdx = headers.findIndex(h => h.startsWith(`Item_${num}_`));
+            if (matchIdx !== -1 && row[matchIdx] !== undefined) {
+              val = row[matchIdx];
+            } else {
+              val = getHeaderVal(row, headers, item.id) || '';
+            }
+
+            if (val === '✓' || val === '✗') {
+              record.triStates[item.id] = val;
+            } else {
+              record.triStates[item.id] = '';
+            }
+          });
+
+          if (record.name || record.fileNo) {
+            importedRecords.push(record);
+          }
+        }
+
+        if (importedRecords.length === 0) {
+          showToast('No valid records found in CSV.');
+          return;
+        }
+
+        // Show Import Options Modal (Merge vs Replace All vs Cancel)
+        const importModal = document.getElementById('import-options-modal');
+        document.getElementById('import-modal-body').textContent = `Found ${importedRecords.length} record(s) in CSV. Choose how to import:`;
+
+        const btnCancel = document.getElementById('import-btn-cancel');
+        const btnMerge = document.getElementById('import-btn-merge');
+        const btnReplace = document.getElementById('import-btn-replace');
+
+        const closeImportModal = () => {
+          importModal.classList.remove('active');
+          btnCancel.onclick = null;
+          btnMerge.onclick = null;
+          btnReplace.onclick = null;
+        };
+
+        btnCancel.onclick = () => {
+          closeImportModal();
+        };
+
+        btnMerge.onclick = () => {
+          closeImportModal();
+          let addedCount = 0;
+          let updatedCount = 0;
+
+          importedRecords.forEach(imp => {
+            const existingIdx = patients.findIndex(p => p.id === imp.id || (p.fileNo && p.fileNo === imp.fileNo && p.name === imp.name));
+            if (existingIdx !== -1) {
+              patients[existingIdx] = { ...patients[existingIdx], ...imp };
+              updatedCount++;
+            } else {
+              patients.push(imp);
+              addedCount++;
+            }
+          });
+
+          savePatientsToStorage();
+          renderPatientList();
+          showToast(`Merged: ${addedCount} added, ${updatedCount} updated.`);
+        };
+
+        btnReplace.onclick = () => {
+          closeImportModal();
+          showModal(
+            'Replace All Records?',
+            'WARNING: This will DELETE all existing patient records and replace them with the imported file. This cannot be undone. Continue?',
+            () => {
+              patients = importedRecords;
+              savePatientsToStorage();
+              renderPatientList();
+              showToast(`Replaced all records. ${importedRecords.length} patients imported.`);
+            },
+            null,
+            'Confirm Replace',
+            'Cancel',
+            true
+          );
+        };
+
+        importModal.classList.add('active');
+
+      } catch (err) {
+        console.error('CSV Parsing Error:', err);
+        showToast('Invalid CSV format.');
+      }
     }
 
     function getHeaderVal(row, headers, key) {
@@ -2603,18 +2596,50 @@
       // Export All CSV Button
       document.getElementById('btn-export-all').addEventListener('click', exportAllPatientsCSV);
 
-      // Import CSV Button & File Input
-      const fileInput = document.getElementById('csv-file-input');
-      document.getElementById('btn-import-csv').addEventListener('click', () => {
-        fileInput.value = '';
-        fileInput.click();
-      });
+      // Import CSV Label & File Input
+      const importLabel = document.getElementById('btn-import-csv');
+      if (importLabel) {
+        importLabel.addEventListener('click', () => {
+          showToast('Opening file picker...');
+        });
+      }
 
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          importCSVFile(e.target.files[0]);
-        }
-      });
+      const fileInput = document.getElementById('importFile');
+      if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          // iOS fallback: check extension if type is empty or generic
+          const fileName = file.name ? file.name.toLowerCase() : '';
+          const fileType = file.type ? file.type.toLowerCase() : '';
+
+          const isCSV = fileName.endsWith('.csv') || 
+                        fileType === 'text/csv' || 
+                        fileType === 'application/vnd.ms-excel' ||
+                        fileType === 'application/csv' ||
+                        fileType === 'text/plain' ||
+                        fileType === '';
+
+          if (!isCSV && fileName.length > 0) {
+            alert('Please select a valid CSV file.');
+            fileInput.value = '';
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const content = event.target.result;
+            processImportedCSV(content);
+            fileInput.value = '';
+          };
+          reader.onerror = function() {
+            alert('Failed to read file. Please try again.');
+            fileInput.value = '';
+          };
+          reader.readAsText(file);
+        });
+      }
 
       // Auto save draft on form input change
       const formInputs = document.querySelectorAll('#patient-form input, #patient-form textarea, #patient-form select');
