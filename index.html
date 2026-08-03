@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Rheumatology Record" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f172a'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='%2338bdf8'>🩺</text></svg>" />
   <title>Rheumatology Clinical Record</title>
   <link rel="manifest" href="./manifest.json" />
   <style>
@@ -2732,11 +2734,20 @@
     /* PWA Service Worker Registration */
     function registerServiceWorker() {
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW registered:', reg.scope))
-            .catch(err => console.log('SW reg error:', err));
-        });
+        try {
+          const doRegister = () => {
+            navigator.serviceWorker.register('./sw.js')
+              .then(reg => console.log('[PWA] Service Worker registered successfully:', reg.scope))
+              .catch(err => console.error('[PWA] Service Worker registration failed:', err));
+          };
+          if (document.readyState === 'complete') {
+            doRegister();
+          } else {
+            window.addEventListener('load', doRegister);
+          }
+        } catch (err) {
+          console.error('[PWA] Service Worker registration exception:', err);
+        }
       }
     }
   </script>

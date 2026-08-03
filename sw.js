@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rheuma-clinical-record-v3';
+const CACHE_NAME = 'rheuma-clinical-record-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,14 +6,26 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
+  console.log('[SW] Installing iOS-compatible Service Worker v5');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Caching app shell assets');
+        return cache.addAll(ASSETS_TO_CACHE);
+      })
+      .then(() => self.skipWaiting())
+      .catch((err) => console.warn('[SW] Caching failed on install:', err))
+  );
 });
 
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating Service Worker v5');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map((name) => caches.delete(name))
+        cacheNames
+          .filter((name) => name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
       );
     }).then(() => self.clients.claim())
   );
@@ -22,41 +34,52 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  // Network-first for HTML/navigation requests so updates reflect immediately
-  if (event.request.mode === 'navigate' || event.request.destination === 'document' || event.request.url.includes('index.html')) {
+  const requestUrl = new URL(event.request.url);
+
+  // iOS Safari compatibility: Do not intercept cross-origin requests
+  if (requestUrl.origin !== location.origin) return;
+
+  const isNavigation = event.request.mode === 'navigate' ||
+                       event.request.destination === 'document' ||
+                       requestUrl.pathname.endsWith('index.html') ||
+                       requestUrl.pathname === '/' ||
+                       requestUrl.pathname.endsWith('/');
+
+  if (isNavigation) {
+    // Cache-First for navigation / HTML requests to guarantee offline loading on iOS
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
+      caches.match('./index.html').then((cachedResponse) => {
+        if (cachedResponse) {
+          // Fetch updated version in background when online
+          fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', networkResponse));
+            }
+          }).catch(() => {/* Ignore network errors offline */});
+          return cachedResponse;
+        }
+        return fetch(event.request).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+            const respClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', respClone));
           }
           return networkResponse;
-        })
-        .catch(() => caches.match(event.request).then(res => res || caches.match('./index.html')))
+        });
+      }).catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // Cache first for static assets
+  // Network-First with Cache Fallback for static assets
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const respClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        }).catch((err) => {
-          console.warn('Service worker cache put error:', err);
-        });
         return networkResponse;
-      });
-    })
+      })
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
   );
 });
-
