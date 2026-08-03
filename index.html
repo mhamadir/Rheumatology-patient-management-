@@ -524,6 +524,7 @@
     .accordion-item.open {
       border-left-color: var(--primary);
       box-shadow: var(--shadow-sm);
+      overflow: visible;
     }
 
     .accordion-header {
@@ -651,9 +652,26 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .form-input:focus, .form-textarea:focus {
+    .form-select {
+      cursor: pointer;
+      display: block;
+      appearance: auto;
+      -webkit-appearance: menulist;
+      -moz-appearance: menulist;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-select option {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      padding: 8px;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
     }
 
     .form-textarea {
@@ -709,23 +727,23 @@
     }
 
     .screening-item.row-yes {
-      background-color: #f0fdf4;
-      border-color: #86efac;
-    }
-
-    .screening-item.row-no {
       background-color: #fef2f2;
       border-color: #fca5a5;
     }
 
+    .screening-item.row-no {
+      background-color: #f0fdf4;
+      border-color: #86efac;
+    }
+
     html.dark .screening-item.row-yes {
-      background-color: #064e3b;
-      border-color: #047857;
+      background-color: #450a0a;
+      border-color: #991b1b;
     }
 
     html.dark .screening-item.row-no {
-      background-color: #450a0a;
-      border-color: #991b1b;
+      background-color: #064e3b;
+      border-color: #047857;
     }
 
     .screening-text {
@@ -800,13 +818,13 @@
     }
 
     .tristate-opt.opt-yes.active {
-      background-color: var(--success);
+      background-color: var(--danger);
       color: #ffffff;
       font-weight: 800;
     }
 
     .tristate-opt.opt-no.active {
-      background-color: var(--danger);
+      background-color: var(--success);
       color: #ffffff;
       font-weight: 800;
     }
@@ -1142,40 +1160,109 @@
             </div>
           </div>
 
-          <!-- SECTION 4: PAST MEDICAL, FAMILY, & SOCIAL HISTORY -->
+          <!-- SECTION 4: SOCIAL HISTORY -->
           <div class="accordion-item" id="acc-sec4">
             <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec4')">
               <div class="accordion-title-container">
                 <span class="status-dot" id="dot-sec4"></span>
-                <span class="accordion-title">4. Past Medical, Family, & Social History</span>
+                <span class="accordion-title">4. Social History</span>
               </div>
-              <span class="accordion-badge" id="badge-sec4">0/8</span>
               <span class="accordion-chevron">▼</span>
             </button>
             <div class="accordion-content">
-
-              <div class="section-subtitle">Comorbidities & Past History</div>
-              <div class="screening-list" id="list-past-history"></div>
-
-              <div class="section-subtitle">Family History (Autoimmune Focus)</div>
-              <div class="screening-list" id="list-family-history"></div>
-
-              <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label" for="inp-medications">Current Medications</label>
-                <textarea id="inp-medications" class="form-textarea" placeholder="List current medications, doses, and compliance..."></textarea>
+              <div class="form-grid" style="gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label" for="inp-social-smoking" style="font-weight: 700;">Smoking</label>
+                  <select id="inp-social-smoking" name="smoking" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option value="Never">Never</option>
+                    <option value="Former">Former</option>
+                    <option value="Current">Current</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-social-alcohol" style="font-weight: 700;">Alcohol</label>
+                  <select id="inp-social-alcohol" name="alcohol" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option value="Never">Never</option>
+                    <option value="Occasional">Occasional</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Former">Former</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-social-drug-use" style="font-weight: 700;">Drug Use</label>
+                  <select id="inp-social-drug-use" name="drugUse" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option value="None">None</option>
+                    <option value="Former">Former</option>
+                    <option value="Current">Current</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-social-diet-exercise" style="font-weight: 700;">Diet & Exercise Habits</label>
+                  <textarea id="inp-social-diet-exercise" name="dietExercise" class="form-textarea" rows="3" placeholder="e.g., Mediterranean diet, walks 30 mins daily"></textarea>
+                </div>
               </div>
-
             </div>
           </div>
 
-          <!-- SECTION 5: REVIEW OF SYSTEMS -->
+          <!-- SECTION 5: PAST MEDICAL HISTORY -->
           <div class="accordion-item" id="acc-sec5">
             <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec5')">
               <div class="accordion-title-container">
                 <span class="status-dot" id="dot-sec5"></span>
-                <span class="accordion-title">5. Review of Systems</span>
+                <span class="accordion-title">5. Past Medical History</span>
               </div>
-              <span class="accordion-badge" id="badge-sec5">0/44</span>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-grid" style="gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label" for="inp-pmh-chronic" style="font-weight: 700;">Chronic Illnesses</label>
+                  <textarea id="inp-pmh-chronic" class="form-textarea" rows="3" placeholder="e.g., Hypertension, Type 2 Diabetes, Psoriasis"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-pmh-hospitalization" style="font-weight: 700;">Previous Hospitalization</label>
+                  <textarea id="inp-pmh-hospitalization" class="form-textarea" rows="3" placeholder="e.g., Admitted 2023 for pneumonia"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-pmh-allergies" style="font-weight: 700;">Allergies</label>
+                  <textarea id="inp-pmh-allergies" class="form-textarea" rows="3" placeholder="e.g., Penicillin (Rash), Sulfa drugs"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="inp-medications" style="font-weight: 700;">Current Medications</label>
+                  <textarea id="inp-medications" class="form-textarea" rows="3" placeholder="e.g., Methotrexate 15mg weekly, Folic Acid 5mg"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 6: PAST SURGICAL HISTORY -->
+          <div class="accordion-item" id="acc-sec6">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec6')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec6"></span>
+                <span class="accordion-title">6. Past Surgical History</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="form-group">
+                <label class="form-label" for="inp-psh-surgical" style="font-weight: 700;">Surgical History</label>
+                <textarea id="inp-psh-surgical" class="form-textarea" rows="4" placeholder="e.g., Right knee arthroscopy 2021, Appendectomy 2015"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 7: REVIEW OF SYSTEMS -->
+          <div class="accordion-item" id="acc-sec7">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec7')">
+              <div class="accordion-title-container">
+                <span class="status-dot" id="dot-sec7"></span>
+                <span class="accordion-title">7. Review of Systems</span>
+              </div>
+              <span class="accordion-badge" id="badge-sec7">0/44</span>
               <span class="accordion-chevron">▼</span>
             </button>
             <div class="accordion-content" id="container-ros">
@@ -1183,12 +1270,12 @@
             </div>
           </div>
 
-          <!-- SECTION 6: PHYSICAL EXAMINATION -->
-          <div class="accordion-item" id="acc-sec6">
-            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec6')">
+          <!-- SECTION 8: PHYSICAL EXAMINATION -->
+          <div class="accordion-item" id="acc-sec8">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec8')">
               <div class="accordion-title-container">
-                <span class="status-dot" id="dot-sec6"></span>
-                <span class="accordion-title">6. Physical Examination</span>
+                <span class="status-dot" id="dot-sec8"></span>
+                <span class="accordion-title">8. Physical Examination</span>
               </div>
               <span class="accordion-chevron">▼</span>
             </button>
@@ -1218,12 +1305,12 @@
             </div>
           </div>
 
-          <!-- SECTION 7: INVESTIGATIONS -->
-          <div class="accordion-item" id="acc-sec7">
-            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec7')">
+          <!-- SECTION 9: INVESTIGATIONS -->
+          <div class="accordion-item" id="acc-sec9">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec9')">
               <div class="accordion-title-container">
-                <span class="status-dot" id="dot-sec7"></span>
-                <span class="accordion-title">7. Investigations</span>
+                <span class="status-dot" id="dot-sec9"></span>
+                <span class="accordion-title">9. Investigations</span>
               </div>
               <span class="accordion-chevron">▼</span>
             </button>
@@ -1234,12 +1321,12 @@
             </div>
           </div>
 
-          <!-- SECTION 8: RX (PRESCRIPTION) -->
-          <div class="accordion-item" id="acc-sec8">
-            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec8')">
+          <!-- SECTION 10: RX (PRESCRIPTION) & PLAN -->
+          <div class="accordion-item" id="acc-sec10">
+            <button type="button" class="accordion-header" onclick="toggleAccordion('acc-sec10')">
               <div class="accordion-title-container">
-                <span class="status-dot" id="dot-sec8"></span>
-                <span class="accordion-title">8. Rx (Prescription) & Plan</span>
+                <span class="status-dot" id="dot-sec10"></span>
+                <span class="accordion-title">10. Rx (Prescription) & Plan</span>
               </div>
               <span class="accordion-chevron">▼</span>
             </button>
@@ -1363,20 +1450,6 @@
       { id: 'item_30', num: '30.', text: 'Neurological: Foot drop / wrist drop, asymmetric numbness (Mononeuritis)' }
     ];
 
-    const SECTION_4_COMORBIDITIES = [
-      { id: 'item_31', num: '31.', text: 'Peptic Ulcer Disease / GI Bleed (NSAID caution)' },
-      { id: 'item_32', num: '32.', text: 'Chronic Kidney Disease (NSAID/Methotrexate caution)' },
-      { id: 'item_33', num: '33.', text: 'Liver Disease / Hepatitis B or C screening' },
-      { id: 'item_34', num: '34.', text: 'Tuberculosis history / Exposure (Prior to Biologics)' },
-      { id: 'item_35', num: '35.', text: 'Diabetes / Hypertension / Ischemic Heart Disease' }
-    ];
-
-    const SECTION_4_FAMILY = [
-      { id: 'item_36', num: '36.', text: 'Rheumatoid Arthritis (RA)' },
-      { id: 'item_37', num: '37.', text: 'Systemic Lupus Erythematosus (SLE)' },
-      { id: 'item_38', num: '38.', text: 'Ankylosing Spondylitis / Psoriasis / IBD' }
-    ];
-
     const SECTION_5_ROS = [
       { category: 'General', items: [
         { id: 'item_39', num: '39.', text: 'Fever' },
@@ -1446,13 +1519,11 @@
       ]}
     ];
 
-    // Master list of all 82 items for quick lookup
+    // Master list of all 74 items for quick lookup
     const ALL_ITEMS = [
       ...SECTION_3_A,
       ...SECTION_3_B,
       ...SECTION_3_C,
-      ...SECTION_4_COMORBIDITIES,
-      ...SECTION_4_FAMILY,
       ...SECTION_5_ROS.flatMap(cat => cat.items)
     ];
 
@@ -1555,11 +1626,7 @@
       renderTriStateList(SECTION_3_B, 'list-screening-B');
       renderTriStateList(SECTION_3_C, 'list-screening-C');
 
-      // Render Section 4
-      renderTriStateList(SECTION_4_COMORBIDITIES, 'list-past-history');
-      renderTriStateList(SECTION_4_FAMILY, 'list-family-history');
-
-      // Render Section 5
+      // Render Section 7 (Review of Systems)
       const rosContainer = document.getElementById('container-ros');
       rosContainer.innerHTML = '';
       SECTION_5_ROS.forEach(cat => {
@@ -1688,32 +1755,44 @@
       setDot('dot-sec3', sec3Count > 0);
       document.getElementById('badge-sec3').textContent = `${sec3Count}/30`;
 
-      // 5. Section 4 (8 tri-state items + meds)
-      const sec4Count = countFilledTriStates(['item_31', 'item_38']);
+      // 5. Section 4: Social History
+      const smoking = document.getElementById('inp-social-smoking').value;
+      const alcohol = document.getElementById('inp-social-alcohol').value;
+      const drugUse = document.getElementById('inp-social-drug-use').value;
+      const dietEx = document.getElementById('inp-social-diet-exercise').value.trim();
+      setDot('dot-sec4', !!(smoking || alcohol || drugUse || dietEx));
+
+      // 6. Section 5: Past Medical History
+      const chronic = document.getElementById('inp-pmh-chronic').value.trim();
+      const hosp = document.getElementById('inp-pmh-hospitalization').value.trim();
+      const allergies = document.getElementById('inp-pmh-allergies').value.trim();
       const meds = document.getElementById('inp-medications').value.trim();
-      setDot('dot-sec4', sec4Count > 0 || !!meds);
-      document.getElementById('badge-sec4').textContent = `${sec4Count}/8`;
+      setDot('dot-sec5', !!(chronic || hosp || allergies || meds));
 
-      // 6. Section 5 ROS (44 items)
-      const sec5Count = countFilledTriStates(['item_39', 'item_82']);
-      setDot('dot-sec5', sec5Count > 0);
-      document.getElementById('badge-sec5').textContent = `${sec5Count}/44`;
+      // 7. Section 6: Past Surgical History
+      const surgical = document.getElementById('inp-psh-surgical').value.trim();
+      setDot('dot-sec6', !!surgical);
 
-      // 7. Section 6 Vitals
+      // 8. Section 7: ROS (44 items)
+      const sec7Count = countFilledTriStates(['item_39', 'item_82']);
+      setDot('dot-sec7', sec7Count > 0);
+      document.getElementById('badge-sec7').textContent = `${sec7Count}/44`;
+
+      // 9. Section 8: Physical Examination
       const bp = document.getElementById('inp-vital-bp').value.trim();
       const pr = document.getElementById('inp-vital-pr').value.trim();
       const temp = document.getElementById('inp-vital-temp').value.trim();
       const spo2 = document.getElementById('inp-vital-spo2').value.trim();
       const physNotes = (document.getElementById('physicalExamNotes') || document.getElementById('inp-physical-exam-notes'))?.value?.trim() || '';
-      setDot('dot-sec6', !!(bp || pr || temp || spo2 || physNotes));
+      setDot('dot-sec8', !!(bp || pr || temp || spo2 || physNotes));
 
-      // 8. Section 7 Investigations
+      // 10. Section 9: Investigations
       const inv = document.getElementById('inp-investigations').value.trim();
-      setDot('dot-sec7', !!inv);
+      setDot('dot-sec9', !!inv);
 
-      // 9. Section 8 Prescription
+      // 11. Section 10: Rx (Prescription)
       const rx = document.getElementById('inp-prescription').value.trim();
-      setDot('dot-sec8', !!rx);
+      setDot('dot-sec10', !!rx);
     }
 
     function setDot(dotId, hasData) {
@@ -1915,7 +1994,18 @@
 
       document.getElementById('inp-chief-complaint').value = record.chiefComplaint || '';
       document.getElementById('inp-hpi').value = record.hpi || '';
-      document.getElementById('inp-medications').value = record.medications || '';
+
+      document.getElementById('inp-social-smoking').value = record.smoking || '';
+      document.getElementById('inp-social-alcohol').value = record.alcohol || '';
+      document.getElementById('inp-social-drug-use').value = record.drugUse || '';
+      document.getElementById('inp-social-diet-exercise').value = record.dietExercise || '';
+
+      document.getElementById('inp-pmh-chronic').value = record.chronicIllnesses || '';
+      document.getElementById('inp-pmh-hospitalization').value = record.previousHospitalization || '';
+      document.getElementById('inp-pmh-allergies').value = record.allergies || '';
+      document.getElementById('inp-medications').value = record.currentMedications || record.medications || '';
+
+      document.getElementById('inp-psh-surgical').value = record.surgicalHistory || '';
 
       document.getElementById('inp-vital-bp').value = record.vitalBp || '';
       document.getElementById('inp-vital-pr').value = record.vitalPr || '';
@@ -1927,7 +2017,7 @@
       document.getElementById('inp-investigations').value = record.investigations || '';
       document.getElementById('inp-prescription').value = record.prescription || '';
 
-      // Populate Tri-State Items 1..82
+      // Populate Tri-State Items
       ALL_ITEMS.forEach(item => {
         const val = (record.triStates && record.triStates[item.id]) || '';
         currentTriStateData[item.id] = val;
@@ -1970,9 +2060,18 @@
         visitDate: document.getElementById('inp-visit-date').value || new Date().toISOString().split('T')[0],
         occupation: document.getElementById('inp-occupation').value.trim(),
         phone: document.getElementById('inp-phone').value.trim(),
+        smoking: document.getElementById('inp-social-smoking').value,
+        alcohol: document.getElementById('inp-social-alcohol').value,
+        drugUse: document.getElementById('inp-social-drug-use').value,
+        dietExercise: document.getElementById('inp-social-diet-exercise').value.trim(),
+        chronicIllnesses: document.getElementById('inp-pmh-chronic').value.trim(),
+        previousHospitalization: document.getElementById('inp-pmh-hospitalization').value.trim(),
+        allergies: document.getElementById('inp-pmh-allergies').value.trim(),
+        currentMedications: document.getElementById('inp-medications').value.trim(),
+        medications: document.getElementById('inp-medications').value.trim(),
+        surgicalHistory: document.getElementById('inp-psh-surgical').value.trim(),
         chiefComplaint: document.getElementById('inp-chief-complaint').value.trim(),
         hpi: document.getElementById('inp-hpi').value.trim(),
-        medications: document.getElementById('inp-medications').value.trim(),
         vitalBp: document.getElementById('inp-vital-bp').value.trim(),
         vitalPr: document.getElementById('inp-vital-pr').value.trim(),
         vitalTemp: document.getElementById('inp-vital-temp').value.trim(),
@@ -2077,10 +2176,18 @@
         'Date_Of_Visit',
         'Occupation',
         'Phone',
+        'Smoking',
+        'Alcohol',
+        'DrugUse',
+        'DietExercise',
+        'ChronicIllnesses',
+        'PreviousHospitalization',
+        'Allergies',
+        'CurrentMedications',
+        'SurgicalHistory',
         'Chief_Complaint',
         'HPI',
         ...ALL_ITEMS.map(item => `Item_${item.id.replace('item_', '')}_${item.text.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30)}`),
-        'Current_Medications',
         'BP',
         'PR',
         'Temp',
@@ -2103,10 +2210,18 @@
           p.visitDate || '',
           p.occupation || '',
           p.phone || '',
+          p.smoking || '',
+          p.alcohol || '',
+          p.drugUse || '',
+          p.dietExercise || '',
+          p.chronicIllnesses || '',
+          p.previousHospitalization || '',
+          p.allergies || '',
+          p.currentMedications || p.medications || '',
+          p.surgicalHistory || '',
           p.chiefComplaint || '',
           p.hpi || '',
           ...ALL_ITEMS.map(item => (p.triStates && p.triStates[item.id]) || ''),
-          p.medications || '',
           p.vitalBp || '',
           p.vitalPr || '',
           p.vitalTemp || '',
@@ -2281,9 +2396,18 @@
               visitDate: getHeaderVal(row, headers, 'Date_Of_Visit') || getHeaderVal(row, headers, 'VisitDate') || '',
               occupation: getHeaderVal(row, headers, 'Occupation') || '',
               phone: getHeaderVal(row, headers, 'Phone') || '',
+              smoking: getHeaderVal(row, headers, 'Smoking') || '',
+              alcohol: getHeaderVal(row, headers, 'Alcohol') || '',
+              drugUse: getHeaderVal(row, headers, 'DrugUse') || getHeaderVal(row, headers, 'Drug_Use') || '',
+              dietExercise: getHeaderVal(row, headers, 'DietExercise') || getHeaderVal(row, headers, 'Diet_Exercise') || '',
+              chronicIllnesses: getHeaderVal(row, headers, 'ChronicIllnesses') || getHeaderVal(row, headers, 'Chronic_Illnesses') || '',
+              previousHospitalization: getHeaderVal(row, headers, 'PreviousHospitalization') || getHeaderVal(row, headers, 'Previous_Hospitalization') || '',
+              allergies: getHeaderVal(row, headers, 'Allergies') || '',
+              currentMedications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
+              medications: getHeaderVal(row, headers, 'CurrentMedications') || getHeaderVal(row, headers, 'Current_Medications') || '',
+              surgicalHistory: getHeaderVal(row, headers, 'SurgicalHistory') || getHeaderVal(row, headers, 'Surgical_History') || '',
               chiefComplaint: getHeaderVal(row, headers, 'Chief_Complaint') || '',
               hpi: getHeaderVal(row, headers, 'HPI') || '',
-              medications: getHeaderVal(row, headers, 'Current_Medications') || '',
               vitalBp: getHeaderVal(row, headers, 'BP') || '',
               vitalPr: getHeaderVal(row, headers, 'PR') || '',
               vitalTemp: getHeaderVal(row, headers, 'Temp') || '',
@@ -2491,9 +2615,13 @@
       });
 
       // Auto save draft on form input change
-      const formInputs = document.querySelectorAll('#patient-form input, #patient-form textarea');
+      const formInputs = document.querySelectorAll('#patient-form input, #patient-form textarea, #patient-form select');
       formInputs.forEach(input => {
         input.addEventListener('input', () => {
+          updateAccordionIndicators();
+          autoSaveDraft();
+        });
+        input.addEventListener('change', () => {
           updateAccordionIndicators();
           autoSaveDraft();
         });
